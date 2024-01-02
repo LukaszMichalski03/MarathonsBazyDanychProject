@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v8.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v8.0": {
+      "BDProject_MarathonesApp/1.0.0": {
+        "runtime": {
+          "BDProject_MarathonesApp.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "BDProject_MarathonesApp/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\buildMultiTargeting\BDProject_MarathonesApp.props" />
+</Project>

@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\BDProject_MarathonesApp.props" />
+</Project>
