@@ -1,4 +1,5 @@
 using BDProject_MarathonesApp.Data;
+using BDProject_MarathonesApp.Interfaces;
 using Microsoft.Extensions.Configuration;
 
 namespace BDProject_MarathonesApp
@@ -14,7 +15,8 @@ namespace BDProject_MarathonesApp
 
             builder.Services.AddControllersWithViews();
 
-            builder.Services.AddScoped<DatabaseHelper>();
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
+            builder.Services.AddScoped<IRaceRepository, RaceRepository>();
 
             var app = builder.Build();
 
