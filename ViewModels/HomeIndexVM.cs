@@ -1,8 +1,10 @@
-﻿namespace BDProject_MarathonesApp.ViewModels
+﻿using BDProject_MarathonesApp.Models;
+
+namespace BDProject_MarathonesApp.ViewModels
 {
     public class HomeIndexVM
     {
-        public UserVM User;
-        public List<RaceVM> Races;
+        public User User;
+        public List<Race> Races;
     }
 }

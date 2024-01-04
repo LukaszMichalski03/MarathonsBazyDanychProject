@@ -1,13 +1,13 @@
-﻿namespace BDProject_MarathonesApp.ViewModels
+﻿namespace BDProject_MarathonesApp.Models
 {
-    public class RaceVM
+    public class Race
     {
         public int Id;
         public string Name;
         public string Description;
         public double Distance;
-        public string City;
+
         public DateTime Date;
-        public AddressVM? Address;
+        public Address? Address;
     }
 }

@@ -1,4 +1,4 @@
-﻿using BDProject_MarathonesApp.ViewModels;
+﻿using BDProject_MarathonesApp.Models;
 
 namespace BDProject_MarathonesApp.Interfaces
 {
@@ -7,7 +7,7 @@ namespace BDProject_MarathonesApp.Interfaces
         
         bool AddUser(string name, string lastname, string login, string password);
 
-        Task<UserVM?> FindUserByLoginPassword(string login, string password);
-        Task<UserVM?> FindUserById(int id);
+        Task<User?> FindUserByLoginPassword(string login, string password);
+        Task<User?> FindUserById(int id);
     }
 }

@@ -1,9 +1,9 @@
-﻿namespace BDProject_MarathonesApp.ViewModels
+﻿namespace BDProject_MarathonesApp.Models
 {
-    public class AddressVM
+    public class Address
     {
-        public int? Id;
-        public string? City;
+        public int Id;
+        public string City;
         public string? Region;
         public string? PostalCode;
         public string? Street;

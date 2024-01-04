@@ -17,6 +17,7 @@ namespace BDProject_MarathonesApp
 
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IRaceRepository, RaceRepository>();
+            builder.Services.AddScoped<IParticipantRepository, ParticipantRepository>();
 
             var app = builder.Build();
 

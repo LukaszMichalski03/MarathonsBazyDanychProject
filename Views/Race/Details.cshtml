@@ -1,5 +1,5 @@
 ﻿@using BDProject_MarathonesApp.ViewModels
-@model RaceVM
+@model RaceDetailsVM
 
 @*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -11,10 +11,10 @@
 
     <!-- Portfolio Item Heading -->
     <h1 class="my-4">
-        @Model.Name
+        @Model.Race.Name
         <small>Secondary Text</small>
     </h1>
-
+    
     <!-- Portfolio Item Row -->
     <div class="row">
 
@@ -23,50 +23,44 @@
         </div>
 
         <div class="col-md-4">
-            <h3 class="my-3">Project Description</h3>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam viverra euismod odio, gravida pellentesque urna varius vitae. Sed dui lorem, adipiscing in adipiscing et, interdum nec metus. Mauris ultricies, justo eu convallis placerat, felis enim.</p>
-            <h3 class="my-3">Project Details</h3>
+            <h3 class="my-3">Opis</h3>
+            <p>@Model.Race.Description</p>
+            <h3 class="my-3">Dystans</h3>
+            <p>@Model.Race.Distance km</p>
+            <h3 class="my-3">Adres</h3>
+            <style>
+                ul {
+                    list-style-type: none;
+                    padding: 0;
+                }
+                li {
+                    margin-bottom: 5px;
+                }
+            </style>
+
             <ul>
-                <li>Lorem Ipsum</li>
-                <li>Dolor Sit Amet</li>
-                <li>Consectetur</li>
-                <li>Adipiscing Elit</li>
+                <li>@Model.Race.Address.Region</li>
+                <li>@Model.Race.Address.City @Model.Race.Address.PostalCode</li>
+                <li> @Model.Race.Address.Street</li>
+                @if (Model.Race.Address.BuildingNumber is not null)
+                {
+                    <li>@Model.Race.Address.BuildingNumber</li>
+                }
             </ul>
+
+            <form method="post" action="@Url.Action("SignForARun", "Race")">
+                <input type="hidden" name="id" value="@Model.Race.Id" />
+                <input type="hidden" name="userId" value="@Model.UserId" />
+                <button type="submit" class="btn btn-primary">Zapisz się na bieg</button>
+            </form>
+
         </div>
 
     </div>
-    <!-- /.row -->
-    <!-- Related Projects Row -->
-    <h3 class="my-4">Related Projects</h3>
+    
+   
 
-    <div class="row">
-
-        <div class="col-md-3 col-sm-6 mb-4">
-            <a href="#">
-                <img class="img-fluid" src="https://via.placeholder.com/500x300" alt="">
-            </a>
-        </div>
-
-        <div class="col-md-3 col-sm-6 mb-4">
-            <a href="#">
-                <img class="img-fluid" src="https://via.placeholder.com/500x300" alt="">
-            </a>
-        </div>
-
-        <div class="col-md-3 col-sm-6 mb-4">
-            <a href="#">
-                <img class="img-fluid" src="https://via.placeholder.com/500x300" alt="">
-            </a>
-        </div>
-
-        <div class="col-md-3 col-sm-6 mb-4">
-            <a href="#">
-                <img class="img-fluid" src="https://via.placeholder.com/500x300" alt="">
-            </a>
-        </div>
-
-    </div>
-    <!-- /.row -->
+   
 
 </div>
 <!-- /.container -->

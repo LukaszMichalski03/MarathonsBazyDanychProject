@@ -21,7 +21,7 @@ namespace BDProject_MarathonesApp.Controllers
         [HttpGet]
         public async Task<IActionResult> Index(int id)
         {
-            List<RaceVM> races = await _raceRepository.GetAllRaces();
+            List<Race> races = await _raceRepository.GetAllRaces();
             var userVM = await _userRepository.FindUserById(id);
             if(userVM == null)  return RedirectToAction("Login", "Account");
             HomeIndexVM homeIndexVM = new HomeIndexVM() { 

@@ -1,5 +1,5 @@
 ﻿using BDProject_MarathonesApp.Interfaces;
-using BDProject_MarathonesApp.ViewModels;
+using BDProject_MarathonesApp.Models;
 using MySql.Data.MySqlClient;
 using System.Data;
 using System.Xml.Linq;
@@ -39,7 +39,7 @@ namespace BDProject_MarathonesApp.Data
             }
         }
 
-        public async Task<UserVM?> FindUserById(int id)
+        public async Task<User?> FindUserById(int id)
         {
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
@@ -56,7 +56,7 @@ namespace BDProject_MarathonesApp.Data
                         if (reader.Read())
                         {
                             // Jeżeli udało się odczytać dane, zwróć obiekt User
-                            return new UserVM
+                            return new User
                             {
                                 Id = reader.GetInt32("Id"),
                                 Name = reader.GetString("imie"),
@@ -70,7 +70,7 @@ namespace BDProject_MarathonesApp.Data
             }
         }
 
-        public async Task<UserVM?> FindUserByLoginPassword(string login, string password)
+        public async Task<User?> FindUserByLoginPassword(string login, string password)
         {
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
@@ -88,7 +88,7 @@ namespace BDProject_MarathonesApp.Data
                         if (reader.Read())
                         {
                             // Jeżeli udało się odczytać dane, zwróć obiekt User
-                            return new UserVM
+                            return new User
                             {
                                 Id = reader.GetInt32("Id"),
                                 Name = reader.GetString("imie"),

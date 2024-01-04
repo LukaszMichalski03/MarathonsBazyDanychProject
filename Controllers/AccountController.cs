@@ -1,5 +1,5 @@
 ﻿using BDProject_MarathonesApp.Interfaces;
-using BDProject_MarathonesApp.ViewModels;
+using BDProject_MarathonesApp.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BDProject_MarathonesApp.Controllers
@@ -19,7 +19,7 @@ namespace BDProject_MarathonesApp.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(string email, string password)
         {
-            UserVM? user = await _userRepository.FindUserByLoginPassword(email, password);
+            User? user = await _userRepository.FindUserByLoginPassword(email, password);
             if(user is not null) return RedirectToAction("Index", "Home", new {id = user.Id});
             return View();
         }

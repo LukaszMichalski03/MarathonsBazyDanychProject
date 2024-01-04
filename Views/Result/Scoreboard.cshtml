@@ -1,0 +1,40 @@
+﻿@model List<Score>
+
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+<div class="container">
+    <h2 class="m-5">Wyniki Biegu:</h2>
+    <div class="list-group m-4 d-flex">
+        @foreach (var item in Model)
+        {
+            <a  class="list-group-item list-group-item-action flex-column align-items-start">
+                <div class="d-flex w-100 gap-4">
+                    <h6 class="fs-6">@item.Place</h6>
+                    <div class="flex-column align-items-start">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h3 class="mb-1">@item.Runner.User.Name @item.Runner.User.LastName</h3>
+
+                        </div>
+                        <h4 class="mb-1">@item.Finish_Time</h4>
+                        @if (item.Runner.User.Club?.Name != null)
+                        {
+                            <p class=" list-group-item-text">@item.Runner.User.Club.Name</p>
+                        }
+                        else
+                        {
+                            <br />
+                        }
+                    </div>
+                </div>
+                
+            </a>
+            
+        }
+    </div>
+</div>

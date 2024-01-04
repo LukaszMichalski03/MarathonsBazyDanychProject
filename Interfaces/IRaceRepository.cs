@@ -1,10 +1,12 @@
-﻿using BDProject_MarathonesApp.ViewModels;
+﻿using BDProject_MarathonesApp.Models;
 
 namespace BDProject_MarathonesApp.Interfaces
 {
     public interface IRaceRepository
     {
-        Task<List<RaceVM>> GetAllRaces();
-        Task<RaceVM?> GetRaceById(int id);
+        Task<List<Race>> GetAllRaces();
+        Task<List<Race>> GetFinishedRaces();
+        Task<Race?> GetRaceById(int id);
+        Task<List<Score>> GetScoreBoard(int id);
     }
 }
