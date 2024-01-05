@@ -19,6 +19,7 @@ namespace BDProject_MarathonesApp.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(string email, string password)
         {
+            if(email == "admin@admin" && password=="admin") return RedirectToAction("AllRaces", "Admin");
             User? user = await _userRepository.FindUserByLoginPassword(email, password);
             if(user is not null) return RedirectToAction("Index", "Home", new {id = user.Id});
             return View();
@@ -31,8 +32,12 @@ namespace BDProject_MarathonesApp.Controllers
         [HttpPost]
         public IActionResult Register(string name, string lastName, string email, string password)
         {
-            bool result = _userRepository.AddUser(name, lastName, email, password);
-            if (result) return RedirectToAction("Index", "Home"); 
+            if(email != "admin@admin" && password != "admin")
+            {
+                bool result = _userRepository.AddUser(name, lastName, email, password);
+                if (result) return RedirectToAction("Index", "Home");
+            }
+            
             return View();
         }
     }

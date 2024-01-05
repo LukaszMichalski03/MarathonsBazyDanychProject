@@ -20,6 +20,9 @@ namespace BDProject_MarathonesApp.Data
             }
         }
 
+        
+
+
         public async Task<List<Race>> GetAllRaces()
         {
             List<Race> races = new List<Race>();
@@ -180,6 +183,33 @@ namespace BDProject_MarathonesApp.Data
 
             }
             return results;
+        }
+
+        public async Task<bool> DeleteRace(int id)
+        {
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string checkQuery = $"SELECT COUNT(*) FROM biegi WHERE Id={id}";
+                using (MySqlCommand checkCommand = new MySqlCommand(checkQuery, connection))
+                {
+                    int count = Convert.ToInt32(checkCommand.ExecuteScalar());
+
+                    if (count == 0)
+                    {
+                        return false;
+                    }
+                }
+
+                string deleteQuery = $"DELETE FROM biegi WHERE Id={id}";
+                using (MySqlCommand deleteCommand = new MySqlCommand(deleteQuery, connection))
+                {
+                    deleteCommand.ExecuteNonQuery();
+                }
+
+                return true;
+            }
         }
 
     }

@@ -69,6 +69,72 @@ namespace BDProject_MarathonesApp.Data
             }
         }
 
+        public async Task<List<Participant>> GetRaceParticipants(int raceId)
+        {
+            List<Participant> runners = new List<Participant>();
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
 
+                string query = $"SELECT uczestnicy.Id AS id, uczestnicy.bieg_id AS bieg_id, uczestnicy.nr_startowy AS nr_startowy, uzytkownicy.login AS login, uzytkownicy.imie AS imie, uzytkownicy.nazwisko AS nazwisko FROM uzytkownicy, uczestnicy WHERE uczestnicy.bieg_id = {raceId} AND uczestnicy.uzytkownik_id = uzytkownicy.Id;";
+
+                using (MySqlCommand command = new MySqlCommand(query, connection))
+                {
+                    using (MySqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            Participant participant = new Participant
+                            {
+                                Id = reader.GetInt32("id"),
+                                StartingNumber = reader.GetInt32("nr_startowy"),
+                                Race = new Race
+                                {
+                                    Id = reader.GetInt32("bieg_id")
+                                },
+                                User = new User
+                                {
+                                    Name = reader.GetString("imie"),
+                                    Login = reader.GetString("login"),
+                                    LastName = reader.GetString("nazwisko"),
+                                }
+
+                            };
+
+                            runners.Add(participant);
+                        }
+                    }
+                }
+            }
+            return runners;
+        }
+
+        public async Task<bool> DeleteParticipant(int id)
+        {
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string checkQuery = $"SELECT COUNT(*) FROM uczestnicy WHERE Id={id}";
+                using (MySqlCommand checkCommand = new MySqlCommand(checkQuery, connection))
+                {
+                    int count = Convert.ToInt32(checkCommand.ExecuteScalar());
+
+                    if (count == 0)
+                    {
+                        return false;
+                    }
+                }
+
+                string deleteQuery = $"DELETE FROM uczestnicy WHERE Id={id}";
+                using (MySqlCommand deleteCommand = new MySqlCommand(deleteQuery, connection))
+                {
+                    deleteCommand.ExecuteNonQuery();
+                }
+
+                return true;
+            }
+        }
     }
+    
 }

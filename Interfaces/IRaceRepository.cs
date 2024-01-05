@@ -8,5 +8,6 @@ namespace BDProject_MarathonesApp.Interfaces
         Task<List<Race>> GetFinishedRaces();
         Task<Race?> GetRaceById(int id);
         Task<List<Score>> GetScoreBoard(int id);
+        Task<bool> DeleteRace(int id);
     }
 }
