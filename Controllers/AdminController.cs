@@ -25,6 +25,11 @@ namespace BDProject_MarathonesApp.Controllers
             
             return View("Races/Index", races);
         }
+        [HttpGet]
+        public async Task<IActionResult> UpdateRace(int id)
+        {
+            return View();
+        }
         [HttpPost]
         public async Task<IActionResult> DeleteRace(int id)
         {

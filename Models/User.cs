@@ -6,6 +6,7 @@
         public string Name;
         public string LastName;
         public string Login;
+        public string Password;
         public Address? Address;
         public Club? Club;
     }

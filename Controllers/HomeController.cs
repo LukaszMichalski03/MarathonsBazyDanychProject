@@ -3,6 +3,7 @@ using BDProject_MarathonesApp.Models;
 using BDProject_MarathonesApp.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using static System.Collections.Specialized.BitVector32;
 
 namespace BDProject_MarathonesApp.Controllers
 {
@@ -41,5 +42,82 @@ namespace BDProject_MarathonesApp.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
-    }
+        [HttpGet]
+        public async Task<IActionResult> Profile(int id)
+        {
+            User user = await _userRepository.FindUserById(id);
+            ProfileVM profileVM = new ProfileVM
+            {
+                UserId = user.Id,
+                Name = user.Name,
+                LastName = user.LastName,
+                Login = user.Login,
+                Password = user.Password,
+                AddressId = user.Address?.Id,
+                Region = user.Address?.Region,
+                City = user.Address?.City,
+                Street = user.Address?.Street,
+                BuildingNumber = user.Address?.BuildingNumber,
+                PostalCode = user.Address?.PostalCode,
+
+            };
+            return View(profileVM);
+        }
+		[HttpPost]
+		public async Task<IActionResult> UpdateUserProfile(int UserId, string Name, string LastName, string Login, string Password, int? AddressId, string? Region, string? City, string? Street, string? BuildingNumber, string? PostalCode)
+		{
+			User user1 = new User
+			{
+				Id = UserId,
+				Name = Name,
+				LastName = LastName,
+				Login = Login,
+				Password = Password,
+			};
+
+			
+
+			
+			
+			Address address = new Address
+			{
+				Id = AddressId,
+				Region =    Region,
+				City =  City,
+				Street = Street,
+				BuildingNumber = BuildingNumber,
+				PostalCode = PostalCode,
+			};
+            
+
+            if (address.Id == null)
+            {
+				int number = await _userRepository.AddAddressRetId(Region, City, Street, PostalCode, BuildingNumber);
+                address.Id = number;
+			}
+            else
+            {
+				await _userRepository.UpdateAddress(address);
+			}
+			user1.Address = address;
+			int? number1 = await _userRepository.GetAddressId(address);
+            if(number1 != null) user1.Address.Id = number1;
+            await _userRepository.UpdateUserProfile(user1);
+
+                
+
+			
+
+			return RedirectToAction("Profile", new { id = user1.Id });
+		}
+
+		[HttpPost]
+		public async Task<IActionResult> UpdateUserAddress(User address)
+		{
+			bool result = await _userRepository.UpdateAddress(address.Address);
+			return NoContent();
+		}
+	}
+
 }
+

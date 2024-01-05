@@ -2,9 +2,9 @@
 {
     public class Address
     {
-        public int Id;
+        public int? Id;
         public string City;
-        public string? Region;
+        public string Region;
         public string? PostalCode;
         public string? Street;
         public string? BuildingNumber;
