@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BDProject_MarathonesApp")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4e0ca92bd8bd8b4ece6b746550bce570a8e1a35e")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8416f272d108aa4c7ade96cefd86dea211071879")]
 [assembly: System.Reflection.AssemblyProductAttribute("BDProject_MarathonesApp")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BDProject_MarathonesApp")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

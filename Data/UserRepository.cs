@@ -45,7 +45,7 @@ namespace BDProject_MarathonesApp.Data
             {
                 connection.Open();
 
-                string query = $"SELECT uzytkownicy.adres_id AS adres_id, uzytkownicy.Id AS Id, imie,haslo, nazwisko, login, adresy.wojewodztwo AS wojewodztwo, adresy.miasto AS miasto, adresy.ulica AS ulica, adresy.kod_pocztowy, adresy.nr_budynku FROM uzytkownicy LEFT JOIN adresy ON uzytkownicy.adres_id = adresy.Id WHERE uzytkownicy.id = {id};";
+                string query = $"SELECT uzytkownicy.adres_id AS adres_id, uzytkownicy.Id AS Id, klub_id, imie,haslo, nazwisko, login, adresy.wojewodztwo AS wojewodztwo, adresy.miasto AS miasto, adresy.ulica AS ulica, adresy.kod_pocztowy, adresy.nr_budynku FROM uzytkownicy LEFT JOIN adresy ON uzytkownicy.adres_id = adresy.Id WHERE uzytkownicy.id = {id};";
 
                 using (MySqlCommand command = new MySqlCommand(query, connection))
                 {
@@ -73,7 +73,12 @@ namespace BDProject_MarathonesApp.Data
                                         Street = reader.GetString("ulica"),
                                         PostalCode = reader.GetString("kod_pocztowy"),
                                         BuildingNumber = reader.GetString("nr_budynku"),
-                                    }
+                                    },
+                                Club = reader.IsDBNull(reader.GetOrdinal("klub_id"))
+                                ? null: new Club
+                                {
+                                    Id = reader.GetInt32("klub_id"),
+                                }
                             };
                         }
                     }
