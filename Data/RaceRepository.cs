@@ -30,7 +30,7 @@ namespace BDProject_MarathonesApp.Data
             {
                 connection.Open();
 
-                string query = $"SELECT biegi.Id, nazwa_biegu, opis_biegu, dystans, data_biegu, miasto FROM biegi, adresy WHERE adres_biegu=adresy.Id ORDER BY data_biegu ASC";
+                string query = $"SELECT biegi.adres_biegu, biegi.Id, nazwa_biegu, opis_biegu, dystans, data_biegu, miasto FROM biegi, adresy WHERE adres_biegu=adresy.Id ORDER BY data_biegu ASC";
 
                 using (MySqlCommand command = new MySqlCommand(query, connection))
                 {
@@ -48,7 +48,8 @@ namespace BDProject_MarathonesApp.Data
                                 Date = reader.GetDateTime("data_biegu"),
                                 Address = new Address
                                 {
-                                   City = reader.GetString("miasto")
+                                   Id = reader.GetInt32("adres_biegu"),
+								   City = reader.GetString("miasto")
                                 }
                                 
                             };
@@ -97,13 +98,50 @@ namespace BDProject_MarathonesApp.Data
             }
             return races;
         }
+        public async Task<List<Race>> GetAllNotFinishedRaces()
+        {
+            List<Race> races = new List<Race>();
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string query = $"SELECT biegi.Id, nazwa_biegu, opis_biegu, dystans, data_biegu,  wojewodztwo, miasto, ulica, nr_budynku, kod_pocztowy FROM biegi, adresy WHERE adres_biegu=adresy.Id AND data_biegu > CURDATE() ORDER BY data_biegu ASC";
+
+                using (MySqlCommand command = new MySqlCommand(query, connection))
+                {
+                    using (MySqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            // Jeżeli udało się odczytać dane, utwórz obiekt ClubVM i dodaj go do listy
+                            Race race = new Race
+                            {
+                                Id = reader.GetInt32("Id"),
+                                Name = reader.GetString("nazwa_biegu"),
+                                Description = reader.GetString("opis_biegu"),
+                                Distance = reader.GetDouble("dystans"),
+                                Date = reader.GetDateTime("data_biegu"),
+                                Address = new Address
+                                {
+                                    City = reader.GetString("miasto")
+                                }
+
+                            };
+
+                            races.Add(race);
+                        }
+                    }
+                }
+            }
+            return races;
+        }
         public async Task<Race?> GetRaceById(int id)
         {
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
                 connection.Open();
 
-                string query = $"SELECT biegi.Id AS Id, nazwa_biegu, opis_biegu, dystans, data_biegu, wojewodztwo, miasto, ulica, nr_budynku, kod_pocztowy FROM biegi, adresy WHERE adresy.Id = adres_biegu AND biegi.Id = {Convert.ToInt32(id)}";
+                string query = $"SELECT biegi.adres_biegu, biegi.Id AS Id, nazwa_biegu, opis_biegu, dystans, data_biegu, wojewodztwo, miasto, ulica, nr_budynku, kod_pocztowy FROM biegi, adresy WHERE adresy.Id = adres_biegu AND biegi.Id = {id}";
 
 
                 using (MySqlCommand command = new MySqlCommand(query, connection))
@@ -124,7 +162,8 @@ namespace BDProject_MarathonesApp.Data
                                 Date = reader.GetDateTime("data_biegu"),
                                 Address = new Address
                                 {
-                                    Region = reader.IsDBNull(reader.GetOrdinal("wojewodztwo")) ? null : reader.GetString("wojewodztwo"),
+                                    Id = reader.GetInt32("adres_biegu"),
+									Region = reader.IsDBNull(reader.GetOrdinal("wojewodztwo")) ? null : reader.GetString("wojewodztwo"),
                                     City = reader.IsDBNull(reader.GetOrdinal("miasto")) ? null : reader.GetString("miasto"),
                                     Street = reader.IsDBNull(reader.GetOrdinal("ulica")) ? null : reader.GetString("ulica"),
                                     BuildingNumber = reader.IsDBNull(reader.GetOrdinal("nr_budynku")) ? null : reader.GetString("nr_budynku"),
@@ -145,7 +184,12 @@ namespace BDProject_MarathonesApp.Data
             {
                 connection.Open();
 
-                string query = $"SELECT wyniki.Id AS id, miejsce, czas_ukonczenia, uczestnicy.nr_startowy AS nr_startowy, uzytkownicy.imie AS imie_uzytkownik, uzytkownicy.nazwisko AS nazwisko, uzytkownicy.klub_id AS klub_id, kluby.nazwa AS nazwa_klubu FROM wyniki, uczestnicy, uzytkownicy LEFT JOIN kluby ON uzytkownicy.klub_id = kluby.Id WHERE wyniki.bieg_id = {id} AND wyniki.uczestnik_id = uczestnicy.Id AND uczestnicy.uzytkownik_id = uzytkownicy.Id";
+                string query = $"SELECT wyniki.Id AS id, wyniki.uczestnik_id AS uczestnik_id, miejsce, czas_ukonczenia, uczestnicy.nr_startowy AS nr_startowy, uzytkownicy.imie AS imie_uzytkownik, uzytkownicy.nazwisko AS nazwisko, uzytkownicy.klub_id AS klub_id, kluby.nazwa AS nazwa_klubu " +
+                               $"FROM wyniki " +
+                               $"JOIN uczestnicy ON wyniki.uczestnik_id = uczestnicy.Id " +
+                               $"JOIN uzytkownicy ON uczestnicy.uzytkownik_id = uzytkownicy.Id " +
+                               $"LEFT JOIN kluby ON uzytkownicy.klub_id = kluby.Id " +
+                               $"WHERE wyniki.bieg_id = {id}";
 
                 using (MySqlCommand command = new MySqlCommand(query, connection))
                 {
@@ -153,37 +197,39 @@ namespace BDProject_MarathonesApp.Data
                     {
                         while (reader.Read())
                         {
-                            // Jeżeli udało się odczytać dane, utwórz obiekt ClubVM i dodaj go do listy
+                            // Jeżeli udało się odczytać dane, utwórz obiekt Score i dodaj go do listy
                             Score result = new Score
                             {
                                 Place = reader.GetInt32("miejsce"),
                                 Finish_Time = reader.GetTimeSpan("czas_ukonczenia"),
-                                Runner = new Participant
-                                {
-                                    StartingNumber = reader.GetInt32("nr_startowy"),
-                                    User = new User
+                                Runner = reader.IsDBNull(reader.GetOrdinal("uczestnik_id"))
+                                    ? null
+                                    : new Participant
                                     {
-                                        Name = reader.GetString("imie_uzytkownik"),
-                                        LastName = reader.GetString("nazwisko"),
-                                        Club = reader.IsDBNull(reader.GetOrdinal("klub_id"))
-                                            ? null
-                                            : new Club
-                                            {
-                                                Id = reader.GetInt32("klub_id"),
-                                                Name = reader.GetString("nazwa_klubu")
-                                            }
+                                        StartingNumber = reader.GetInt32("nr_startowy"),
+                                        User = new User
+                                        {
+                                            Name = reader.GetString("imie_uzytkownik"),
+                                            LastName = reader.GetString("nazwisko"),
+                                            Club = reader.IsDBNull(reader.GetOrdinal("klub_id"))
+                                                ? null
+                                                : new Club
+                                                {
+                                                    Id = reader.GetInt32("klub_id"),
+                                                    Name = reader.GetString("nazwa_klubu")
+                                                }
+                                        }
                                     }
-                                }
                             };
 
                             results.Add(result);
                         }
                     }
                 }
-
             }
             return results;
         }
+
 
         public async Task<bool> DeleteRace(int id)
         {
@@ -212,5 +258,28 @@ namespace BDProject_MarathonesApp.Data
             }
         }
 
+		public async Task<bool> UpdateRace(int Id, string Name, string Description, double Distance, DateTime Date, int? AddressId, string? Region, string? City, string? Street, string? PostalCode, string? BuildingNumber)
+		{
+			string dateTime = Date.ToString("yyyy-MM-dd HH:mm:ss");
+			int rowsAffected = 0;
+			using (MySqlConnection connection = new MySqlConnection(connectionString))
+			{
+				connection.Open();
+				string query = $"UPDATE biegi SET nazwa_biegu = '{Name}', opis_biegu = '{Description}', dystans = {Distance}, data_biegu = '{dateTime}' WHERE biegi.Id = {Id} ";
+				if (AddressId != null)
+                {
+				    query = $"UPDATE biegi JOIN adresy ON biegi.adres_biegu = adresy.Id SET biegi.nazwa_biegu = '{Name}', biegi.opis_biegu = '{Description}', biegi.dystans = {Distance}, biegi.data_biegu = '{dateTime}', adresy.wojewodztwo='{Region}', adresy.miasto='{City}', adresy.ulica='{Street}', adresy.nr_budynku = '{BuildingNumber}', adresy.kod_pocztowy = '{PostalCode}' WHERE biegi.Id = {Id};";
+				}
+				using (MySqlCommand command = new MySqlCommand(query, connection))
+				{
+					rowsAffected = await command.ExecuteNonQueryAsync();
+
+					
+				}
+			}
+			return rowsAffected > 0;
+		}
+
+        
     }
 }

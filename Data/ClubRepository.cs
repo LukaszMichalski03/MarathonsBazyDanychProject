@@ -20,7 +20,22 @@ namespace BDProject_MarathonesApp.Data
 			}
 		}
 
-		public async Task<List<Club>> GetAllClubs()
+        public async Task<bool> DeleteClubById(int id)
+        {
+            using(MySqlConnection connection = new MySqlConnection(connectionString))
+			{
+				connection.Open();
+				string query = $"DELETE FROM kluby WHERE Id={id}";//kaskadowe usuwanie w bd
+                using (MySqlCommand command = new MySqlCommand(query, connection))
+                {
+                    int rowsAffected = await command.ExecuteNonQueryAsync();
+
+                    return rowsAffected > 0;
+                }
+            }
+        }
+
+        public async Task<List<Club>> GetAllClubs()
 		{
 			List<Club> races = new List<Club>();
 			using (MySqlConnection connection = new MySqlConnection(connectionString))
@@ -106,6 +121,57 @@ namespace BDProject_MarathonesApp.Data
 				}
 			}
 		}
+
+        public async Task<List<User>> GetClubMembers(int clubId)
+        {
+            List<User> races = new List<User>();
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string query = $"SELECT uzytkownicy.Id AS Id, uzytkownicy.imie, uzytkownicy.nazwisko, uzytkownicy.login, adresy.miasto, uzytkownicy.adres_id AS adres_id " +
+               $"FROM kluby " +
+               $"JOIN uzytkownicy ON kluby.Id = uzytkownicy.klub_id " +
+               $"LEFT JOIN adresy ON uzytkownicy.adres_id = adresy.Id " +
+               $"WHERE kluby.Id = {clubId}";
+
+
+                using (MySqlCommand command = new MySqlCommand(query, connection))
+                {
+                    using (MySqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            // Jeżeli udało się odczytać dane, utwórz obiekt ClubVM i dodaj go do listy
+                            User race = new User
+                            {
+                                Id = reader.GetInt32("Id"),
+                                Name = reader.GetString("imie"),
+                                LastName = reader.GetString("nazwisko"),
+                                Login = reader.GetString("login"),
+                                
+
+                                Address = reader.IsDBNull(reader.GetOrdinal("adres_id"))
+
+                                    ? null
+                                    : new Address
+                                    {
+                                        
+                                        
+                                        City = reader.GetString("miasto"),
+                                        
+
+                                    }
+
+                            };
+
+                            races.Add(race);
+                        }
+                    }
+                }
+            }
+            return races;
+        }
 
         public async Task<bool> JoinClub(int id, int userId)
         {

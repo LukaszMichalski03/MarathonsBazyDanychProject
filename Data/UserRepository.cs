@@ -222,5 +222,56 @@ namespace BDProject_MarathonesApp.Data
 
 			return number;
 		}
-	}
+
+        public async Task<bool> DeleteUser(int id)
+        {
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string query = $"DELETE FROM uzytkownicy WHERE Id = {id}";
+
+                using (MySqlCommand command = new MySqlCommand(query, connection))
+                {
+                    int rowsAffected = await command.ExecuteNonQueryAsync();
+
+                    return rowsAffected > 0;
+                }
+            }
+        }
+
+        public async Task<List<User>> GetAllUsers()
+        {
+            List<User> users = new List<User>();
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string query = $"SELECT Id, imie, nazwisko, login, haslo FROM uzytkownicy";
+
+                using (MySqlCommand command = new MySqlCommand(query, connection))
+                {
+                    using (MySqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            // Jeżeli udało się odczytać dane, utwórz obiekt ClubVM i dodaj go do listy
+                            User user = new User
+                            {
+                                Id = reader.GetInt32("Id"),
+                                Name = reader.GetString("imie"),
+                                LastName = reader.GetString("nazwisko"),
+                                Login = reader.GetString("login"),
+                                Password = reader.GetString("haslo")
+
+                            };
+
+                            users.Add(user);
+                        }
+                    }
+                }
+            }
+            return users;
+        }
+    }
 }

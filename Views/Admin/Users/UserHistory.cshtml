@@ -1,5 +1,4 @@
-﻿@using BDProject_MarathonesApp.ViewModels
-@model AdminRunnersVM
+﻿@model List<Participant>
 
 @*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -35,40 +34,33 @@
     </div>
 </nav>
 <div class="container">
-    <h2 class="m-5">Uczestnicy Biegu:</h2>
-    
-    <form method="post" asp-controller="admin" asp-action="CreateParticipantRecord" style="width:200px">
-        <div class="form-group">
-            <input type="number" class="form-control" name="id" placeholder="Id użytkownika" />
-            <input type="hidden" class="form-control" name="raceId" value="@Model.Raceid" />
-        </div>
-        <button type="submit" class="w-100 btn btn-primary">Dodaj Uczestnika</button>
-    </form>
-
-        
-        
-    <div class="list-group m-4 d-flex ">
-        @foreach (var runner in Model.Participants)
+    <h2 class="m-5">Wyniki Biegu:</h2>
+    <div class="list-group m-4 d-flex">
+        @foreach (var item in Model)
         {
-            <div class="list-group-item createPartWidth list-group-item-action flex-column align-items-start">
+            <div class="list-group-item list-group-item-action flex-column align-items-start">
                 <div class="d-flex w-100 gap-4">
-                    <h6 class="fs-3 text-primary">@runner.StartingNumber</h6>
+                    
                     <div class="flex-column align-items-start">
-                        <div class="d-flex w-100 justify-content-between">
-                            <h4 class="mb-1">@runner.User.Name @runner.User.LastName</h4>
+                        <div class="d-flex w-100 gap-3">
+                            <h3 class="mb-1">@item.User.Name @item.User.LastName</h3>
+                            <h3>nr startowy: <span class="text-primary">@item.StartingNumber</span></h3>
 
                         </div>
-                        <h6 class="mb-1">@runner.User.Login</h6>
-                        
+                        <h4 class="mb-1">@item.Race.Name</h4>
+                        @if (item.Race.Address?.City != null)
+                        {
+                            <p class=" list-group-item-text">@item.Race.Address.City</p>
+                        }
+                        else
+                        {
+                            <br />
+                        }
                     </div>
                 </div>
 
-                <form method="post" asp-controller="Admin" asp-action="DeleteParticipant" asp-route-raceId="@runner.Race.Id" asp-route-id="@runner.Id">
-                    <button type="submit" class="btn btn-danger">Usun Uczestnika</button>
-                </form>
             </div>
-            
+
         }
     </div>
-    
 </div>

@@ -19,6 +19,24 @@ namespace BDProject_MarathonesApp.Controllers
             this._raceRepository = raceRepository;
             this._participantRepository = participantRepository;
         }
+        public async Task<IActionResult> Index(int id)
+        {
+            List<Participant> participations = await _participantRepository.GetUserParticipations(id);
+            RaceIndexVM raceIndexVM = new RaceIndexVM
+            {
+                Participants = participations,
+                UserId = id
+            };
+            return View(raceIndexVM);
+        }
+        [HttpPost]
+        public async Task<IActionResult> DeleteParticipant(int id)
+        {
+            var userPart = await _participantRepository.GetUserParticipant(id);
+            int userId = userPart.User.Id;
+            await _participantRepository.DeleteParticipant(id);
+            return RedirectToAction("Index", new {id = userId });
+        }
         public async Task<IActionResult> Details(int id, int userId)
         {
             Race? race = await _raceRepository.GetRaceById(id);

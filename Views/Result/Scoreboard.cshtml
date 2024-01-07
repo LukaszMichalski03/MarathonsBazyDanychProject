@@ -18,11 +18,15 @@
                     <h6 class="fs-6">@item.Place</h6>
                     <div class="flex-column align-items-start">
                         <div class="d-flex w-100 justify-content-between">
-                            <h3 class="mb-1">@item.Runner.User.Name @item.Runner.User.LastName</h3>
+                            @if(item.Runner != null)
+                            {
+                                <h3 class="mb-1">@item.Runner.User.Name @item.Runner.User.LastName</h3>
+                            }
+                            
 
                         </div>
                         <h4 class="mb-1">@item.Finish_Time</h4>
-                        @if (item.Runner.User.Club?.Name != null)
+                        @if (item.Runner?.User.Club?.Name != null && item.Runner != null)
                         {
                             <p class=" list-group-item-text">@item.Runner.User.Club.Name</p>
                         }

@@ -1,5 +1,5 @@
 ﻿@using BDProject_MarathonesApp.Models
-@model List<Race>
+@model List<User>
 
 @{
     ViewData["Title"] = "Races";
@@ -34,30 +34,30 @@
 
 
 <main role="main">
-    
+
     <div class="list-group p-5">
-        <a class="btn btn-primary fs-3 p-3 mx-auto">Dodaj bieg</a>
-        @foreach (var race in Model)
+        @foreach (var user in Model)
         {
             <div class="list-group-item flex-column align-items-start m-2">
-                <div class="d-flex w-100 justify-content-between">
-                    <h5 class="mb-1">@race.Name</h5>
-                    <small>@race.Date</small>
+                <div class="d-flex w-100 ">
+                    <h5 class="mb-1">@user.Name @user.LastName</h5>
                     
+                    
+
                 </div>
-                <p class="mb-1">@race.Description</p>                
-                 <small>@race.Address.City</small>
+                <p class="mb-1">@user.Login</p>
+                
                 <div class="d-flex gap-4 ms-1">
-                    <form method="post" asp-controller="Admin" asp-action="DeleteRace" asp-route-id="@race.Id">
-                        <button type="submit" class="btn btn-danger">Usun Bieg</button>
+                    <form method="post" asp-controller="Admin" asp-action="DeleteUser" asp-route-id="@user.Id">
+                        <button type="submit" class="btn btn-danger">Usun Konto</button>
                     </form>
 
-                    <a asp-controller="Admin" asp-action="UpdateRace" asp-route-id="@race.Id" class="btn btn-primary">Edytuj Bieg</a>
-                    <a asp-controller="Admin" asp-action="GetParticipants" asp-route-raceId="@race.Id" class="btn btn-primary">Wyswietl uczestników</a>
+                    
+                    <a asp-controller="Admin" asp-action="UserHistory" asp-route-userId="@user.Id" class="btn btn-primary">Zapisy użytkownika</a>
                 </div>
 
             </div>
-            
+
         }
     </div>
 

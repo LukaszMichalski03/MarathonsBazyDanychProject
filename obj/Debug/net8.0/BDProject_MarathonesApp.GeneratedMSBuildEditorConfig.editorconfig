@@ -26,12 +26,32 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxSZWdpc3Rlci5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/Łukasz/Desktop/BazyDanychProjekt/BDProject_MarathonesApp/Views/Admin/Clubs/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cQ2x1YnNcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Łukasz/Desktop/BazyDanychProjekt/BDProject_MarathonesApp/Views/Admin/Clubs/Members.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cQ2x1YnNcTWVtYmVycy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Łukasz/Desktop/BazyDanychProjekt/BDProject_MarathonesApp/Views/Admin/Races/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cUmFjZXNcRWRpdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/Łukasz/Desktop/BazyDanychProjekt/BDProject_MarathonesApp/Views/Admin/Races/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cUmFjZXNcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/Łukasz/Desktop/BazyDanychProjekt/BDProject_MarathonesApp/Views/Admin/Runners/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cUnVubmVyc1xJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Łukasz/Desktop/BazyDanychProjekt/BDProject_MarathonesApp/Views/Admin/Users/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cVXNlcnNcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Łukasz/Desktop/BazyDanychProjekt/BDProject_MarathonesApp/Views/Admin/Users/UserHistory.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cVXNlcnNcVXNlckhpc3RvcnkuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/Łukasz/Desktop/BazyDanychProjekt/BDProject_MarathonesApp/Views/Club/Details.cshtml]
@@ -60,6 +80,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/Łukasz/Desktop/BazyDanychProjekt/BDProject_MarathonesApp/Views/Race/Details.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmFjZVxEZXRhaWxzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Łukasz/Desktop/BazyDanychProjekt/BDProject_MarathonesApp/Views/Race/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmFjZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/Łukasz/Desktop/BazyDanychProjekt/BDProject_MarathonesApp/Views/Result/Index.cshtml]

@@ -6,41 +6,41 @@
 *@
 @{
 }
-<div>
-	<form method="post" asp-action="UpdateUserProfile"  class="m-4">
-
-		<div class="container ">
-			<div class="row gutters ">
-				<div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
-					<div class="card h-100">
-						<div class="card-body">
-							<div class="account-settings">
-								<div class="user-profile">
-									<div class="user-avatar">
-										<img src="https://img.freepik.com/premium-wektory/ikona-awatara002_750950-52.jpg" alt="Card image">
-									</div>
-									<h5 class="user-name">@Model.Name</h5>
-									<h5 class="user-name">@Model.LastName</h5>
-									<h6 class="user-email">@Model.Login</h6>
+<div class="m-4">
+	<div class="container">
+		<div class="row gutters">
+			<div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+				<!-- Left column with user profile info -->
+				<div class="card h-100">
+					<div class="card-body">
+						<div class="account-settings">
+							<div class="user-profile">
+								<div class="user-avatar">
+									<img src="https://img.freepik.com/premium-wektory/ikona-awatara002_750950-52.jpg" alt="Card image">
 								</div>
-								
-
+								<h5 class="user-name">@Model.Name</h5>
+								<h5 class="user-name">@Model.LastName</h5>
+								<h6 class="user-email">@Model.Login</h6>
 							</div>
+						</div>
 
-							<div class="row gutters  text-center m-4">
-								<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 ">
-									<div class="text-right">
-
-										<button type="submit" id="submit" name="submit" class="btn btn-danger" asp-action="Delete">Delete this account</button>
-										<button type="button" id="submit" name="submit" class="m-3 btn btn-secondary" onclick="location.href='@Url.Action("Index", "Home", new {Id = Model.UserId})'">Cancel</button>
-									</div>
+						<div class="row gutters text-center m-4">
+							<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+								<div class="text-right">
+									<form method="post" asp-controller="Home" asp-action="DeleteUser" asp-route-id="@Model.UserId">
+										<button type="submit" class="btn btn-danger">Usuń konto</button>
+									</form>
+									<button type="button" id="submit" name="submit" class="m-3 btn btn-secondary" onclick="location.href='@Url.Action("Index", "Home", new {Id = Model.UserId})'">Cancel</button>
 								</div>
 							</div>
-
-
 						</div>
 					</div>
 				</div>
+			</div>
+
+			<!-- Right column with form -->
+			<div class="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-12">
+				<form method="post" asp-action="UpdateUserProfile">
 				<div class="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-12">
 					<div class="card h-100">
 						<div class="card-body">
@@ -122,76 +122,7 @@
 
 
 
-								@* <input type="hidden" asp-for="UserId" name="UserId" />
-								<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-									<div class="form-group">
-										<label class="fs-5" asp-for="Name">Imie</label>
-										<input type="text" asp-for="Name" name="Name" class="form-control" placeholder="Wpisz imie">
-										
-									</div>
-								</div>
-								<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-									<div class="form-group">
-										<label class="fs-5" asp-for="LastName">Nazwisko</label>
-										<input type="text" asp-for="LastName" name="LastName" class="form-control" placeholder="Wpisz nazwisko">
-										
-									</div>
-								</div>
 								
-								<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-									<div class="form-group">
-										<label class="fs-5" asp-for="Login">Login</label>
-										<input type="email" asp-for="Login" name="Login" class="form-control" placeholder="Wpisz login">
-										
-									</div>
-								</div>
-								<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-									<div class="form-group">
-										<label class="fs-5" asp-for="Password">Hasło</label>
-										<input type="password" asp-for="Password" name="Password" class="form-control" placeholder="Wpisz hasło">
-										
-									</div>
-								</div>
-								
-
-							</div>
-							<div class="row gutters">
-								<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-									<h6 class="mb-2 text-primary">Personal Details</h6>
-								</div>
-								<input type="hidden" asp-for="AddressId" name="AddressId" />
-
-								<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-									<div class="form-group">
-										<label class="fs-5" asp-for="Region">Wojewodztwo</label>
-										<input asp-for="Region" name="Region" class="form-control" placeholder="Wpisz województwo">
-									</div>
-								</div>
-								<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-									<div class="form-group">
-										<label class="fs-5" asp-for="City">Miasto</label>
-										<input asp-for="City" name="City" class="form-control" placeholder="Wpisz miasto">
-									</div>
-								</div>
-								<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-									<div class="form-group">
-										<label class="fs-5" asp-for="Street">Ulica</label>
-										<input asp-for="Street" name="Street" class="form-control" placeholder="Wpisz ulicę">
-									</div>
-								</div>
-								<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-									<div class="form-group">
-										<label class="fs-5" asp-for="PostalCode">Kod pocztowy</label>
-										<input asp-for="PostalCode" name="PostalCode" class="form-control" placeholder="Wpisz kod pocztowy">
-									</div>
-								</div>
-								<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-									<div class="form-group">
-										<label class="fs-5" asp-for="BuildingNumber">Nr budynku</label>
-										<input asp-for="BuildingNumber" name="BuildingNumber" class="form-control" placeholder="Wpisz numer budynku">
-									</div>
-								</div>
-							</div> *@
 
 							<div class="row gutters m-4">
 								<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
@@ -205,11 +136,13 @@
 					</div>
 				</div>
 			</div>
+		</form>
 		</div>
+	</div>
 		
+</div>
 	
 	
-	</form>
 
 	<style>
 

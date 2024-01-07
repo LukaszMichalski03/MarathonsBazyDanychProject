@@ -117,6 +117,13 @@ namespace BDProject_MarathonesApp.Controllers
 			bool result = await _userRepository.UpdateAddress(address.Address);
 			return NoContent();
 		}
+        [HttpPost]
+        public async Task<IActionResult> DeleteUser(int id)
+        {
+            bool result = await _userRepository.DeleteUser(id);
+            if(result) return RedirectToAction("Login", "Account");
+            return NoContent();
+        }
 	}
 
 }

@@ -1,11 +1,13 @@
 ﻿@using BDProject_MarathonesApp.ViewModels
-@model ClubDetailsVM
+@model RaceIndexVM
 
 @*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
 }
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 <nav class="navbar navbar-expand-lg navbar-light bg-light p-3">
     <a class="navbar-brand" href="#">Navbar</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
@@ -36,61 +38,40 @@
         </ul>
     </div>
 </nav>
-<!-- Page Content -->
 <div class="container">
+    <h2 class="m-5">Twoje zgłoszenia:</h2>
+    <div class="list-group m-4 d-flex">
+        @if (Model.Participants != null && Model.Participants.Any())
+        {
+            @foreach (var item in Model.Participants)
+            {
+                <div class="list-group-item list-group-item-action flex-column align-items-start">
+                    <div class="d-flex w-100 gap-4">
+                        <h6 class="fs-6">@item.StartingNumber</h6>
+                        <div class="flex-column align-items-start">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h3 class="mb-1">@item.Race.Name</h3>
 
-    <!-- Portfolio Item Heading -->
-    <h1 class="my-4">
-        @Model.Club.Name
-        <small>Secondary Text</small>
-    </h1>
+                            </div>
 
-    <!-- Portfolio Item Row -->
-    <div class="row">
+                            
+                             <p class=" list-group-item-text">@item.User.Name @item.User.LastName</p>
+                            
 
-        <div class="col-md-8">
-            <img class="img-fluid" src="https://via.placeholder.com/750x500" alt="">
-        </div>
+                        </div>
+                    </div>
+                    <form method="post" asp-controller="Race" asp-action="DeleteParticipant" asp-route-id="@item.Id">
+                        <button type="submit" class="btn btn-danger">Wypisz się z biegu</button>
+                    </form>
+                </div>
+                
 
-        <div class="col-md-4">
-            <h3 class="my-3">Opis</h3>
-            <p>@Model.Club.Description</p>
-            
-            <h3 class="my-3">Adres</h3>
-            <style>
-                ul {
-                    list-style-type: none;
-                    padding: 0;
-                }
-
-                li {
-                    margin-bottom: 5px;
-                }
-            </style>
-
-            <ul>
-                <li>@Model.Club.Address.Region</li>
-                <li>@Model.Club.Address.City @Model.Club.Address.PostalCode</li>
-                <li> @Model.Club.Address.Street</li>
-                @if (Model.Club.Address.BuildingNumber is not null)
-                {
-                    <li>@Model.Club.Address.BuildingNumber</li>
-                }
-            </ul>
-
-            <form method="post" action="@Url.Action("JoinClub", "Club")">
-                <input type="hidden" name="id" value="@Model.Club.Id" />
-                <input type="hidden" name="userId" value="@Model.UserId" />
-                <button type="submit" class="btn btn-primary">Dołącz do klubu</button>
-            </form>
-
-        </div>
+            }
+        }
+        else
+        {
+            <h3>Nie ma żadnych zgłoszeń</h3>
+        }
 
     </div>
-
-
-
-
-
 </div>
-<!-- /.container -->

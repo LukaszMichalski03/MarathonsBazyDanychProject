@@ -135,6 +135,95 @@ namespace BDProject_MarathonesApp.Data
                 return true;
             }
         }
+
+        public async Task<List<Participant>> GetUserParticipations(int userId)
+        {
+            List<Participant> runners = new List<Participant>();
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string query = $"SELECT biegi.nazwa_biegu AS nazwa_biegu, adresy.miasto AS miasto, uzytkownicy.Id AS user_Id, uczestnicy.Id AS id, uczestnicy.bieg_id AS bieg_id, uczestnicy.nr_startowy AS nr_startowy, uzytkownicy.login AS login, uzytkownicy.imie AS imie, uzytkownicy.nazwisko AS nazwisko FROM uzytkownicy, biegi,  uczestnicy, adresy WHERE uzytkownicy.Id= {userId} AND uczestnicy.uzytkownik_id = uzytkownicy.Id AND uczestnicy.bieg_id = biegi.Id AND biegi.adres_biegu=adresy.Id;";
+
+                using (MySqlCommand command = new MySqlCommand(query, connection))
+                {
+                    using (MySqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            Participant participant = new Participant
+                            {
+                                Id = reader.GetInt32("id"),
+                                StartingNumber = reader.GetInt32("nr_startowy"),
+                                Race = new Race
+                                {
+                                    Id = reader.GetInt32("bieg_id"),
+                                    Name = reader.GetString("nazwa_biegu"),
+                                    Address = new Address
+                                    {
+                                        City = reader.GetString("miasto")
+                                    }
+                                },
+                                User = new User
+                                {
+                                    Id = reader.GetInt32("user_Id"),
+                                    Name = reader.GetString("imie"),
+                                    Login = reader.GetString("login"),
+                                    LastName = reader.GetString("nazwisko"),
+                                },
+                                
+
+                            };
+
+                            runners.Add(participant);
+                        }
+                    }
+                }
+            }
+            return runners;
+        }
+
+        public async Task<Participant> GetUserParticipant(int ParticipantId)
+        {
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string query = $"SELECT uzytkownicy.Id AS user_Id, uczestnicy.Id AS id, uczestnicy.bieg_id AS bieg_id, uczestnicy.nr_startowy AS nr_startowy, uzytkownicy.login AS login, uzytkownicy.imie AS imie, uzytkownicy.nazwisko AS nazwisko FROM uzytkownicy, uczestnicy WHERE uczestnicy.Id= {ParticipantId} AND uczestnicy.uzytkownik_id = uzytkownicy.Id;";
+
+                using (MySqlCommand command = new MySqlCommand(query, connection))
+                {
+
+
+                    using (MySqlDataReader reader = command.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+
+                            Participant participant = new Participant
+                            {
+                                Id = reader.GetInt32("id"),
+                                StartingNumber = reader.GetInt32("nr_startowy"),
+                                Race = new Race
+                                {
+                                    Id = reader.GetInt32("bieg_id")
+                                },
+                                User = new User
+                                {
+                                    Id = reader.GetInt32("user_Id"),
+                                    Name = reader.GetString("imie"),
+                                    Login = reader.GetString("login"),
+                                    LastName = reader.GetString("nazwisko"),
+                                }
+
+                            };
+                            return participant;
+                        }
+                    }
+                    return null;
+                }
+            }
+        }
     }
     
 }
