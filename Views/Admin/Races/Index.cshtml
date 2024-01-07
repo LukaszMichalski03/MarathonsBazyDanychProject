@@ -36,7 +36,7 @@
 <main role="main">
     
     <div class="list-group p-5">
-        <a class="btn btn-primary fs-3 p-3 mx-auto">Dodaj bieg</a>
+        <a class="btn btn-primary fs-3 p-3 mx-auto" asp-action="AddRace" asp-controller="Admin">Dodaj bieg</a>
         @foreach (var race in Model)
         {
             <div class="list-group-item flex-column align-items-start m-2">

@@ -73,7 +73,32 @@ namespace BDProject_MarathonesApp.Controllers
 
 			return RedirectToAction("AllRaces");
         }
-        public async Task<IActionResult> AllUsers()
+        
+        public IActionResult AddRace()
+        {
+            return View("Races/Create");
+        }
+		[HttpPost]
+		public async Task<IActionResult> CreateRace(string Name, string Description, double Distance, DateTime Date, string? Region, string? City, string? Street, string? PostalCode, string? BuildingNumber)
+		{
+
+			bool result = await _raceRepository.CreateRace(Name, Description, Distance, Date, Region, City, Street, PostalCode, BuildingNumber);
+
+			return RedirectToAction("AllRaces");
+		}
+		public IActionResult AddClub()
+		{
+			return View("Clubs/Create");
+		}
+		[HttpPost]
+		public async Task<IActionResult> CreateClub(string Name, string Description, string? Region, string? City, string? Street, string? PostalCode, string? BuildingNumber)
+		{
+
+			bool result = await _clubRepository.CreateClub(Name, Description,  Region, City, Street, PostalCode, BuildingNumber);
+
+			return RedirectToAction("AllClubs");
+		}
+		public async Task<IActionResult> AllUsers()
         {
             List<User> users = await _userRepository.GetAllUsers();
             return View("Users/Index", users);

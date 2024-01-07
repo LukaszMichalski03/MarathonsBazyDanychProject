@@ -11,6 +11,6 @@ namespace BDProject_MarathonesApp.Interfaces
 		Task<bool> JoinClub(int id, int userId);
 		Task<bool> LeaveClub(int userId);
 
-
-    }
+		Task<bool> CreateClub(string Name, string Description, string? Region, string? City, string? Street, string? PostalCode, string? BuildingNumber);
+	}
 }

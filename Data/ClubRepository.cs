@@ -1,6 +1,7 @@
 ﻿using BDProject_MarathonesApp.Interfaces;
 using BDProject_MarathonesApp.Models;
 using MySql.Data.MySqlClient;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BDProject_MarathonesApp.Data
 {
@@ -20,7 +21,26 @@ namespace BDProject_MarathonesApp.Data
 			}
 		}
 
-        public async Task<bool> DeleteClubById(int id)
+		public async Task<bool> CreateClub(string Name, string Description, string? Region, string? City, string? Street, string? PostalCode, string? BuildingNumber)
+		{
+			
+			int rowsAffected = 0;
+			int AddressId = await AddAddressRetId(Region, City, Street, PostalCode, BuildingNumber);
+			using (MySqlConnection connection = new MySqlConnection(connectionString))
+			{
+				connection.Open();
+				string query = $"INSERT INTO kluby (adres_id, nazwa, opis) VALUES ({AddressId}, '{Name}', '{Description}')";
+				using (MySqlCommand command = new MySqlCommand(query, connection))
+				{
+					rowsAffected = await command.ExecuteNonQueryAsync();
+
+
+				}
+			}
+			return rowsAffected > 0;
+		}
+
+		public async Task<bool> DeleteClubById(int id)
         {
             using(MySqlConnection connection = new MySqlConnection(connectionString))
 			{
@@ -206,5 +226,47 @@ namespace BDProject_MarathonesApp.Data
                 }
             }
         }
-    }
+		public async Task<int> AddAddressRetId(string region, string city, string street, string postalCode, string? buildingNumber)
+		{
+			using (MySqlConnection connection = new MySqlConnection(connectionString))
+			{
+				int number = await GetNewAddressId();
+				connection.Open();
+
+				string query = $"INSERT INTO adresy (Id, wojewodztwo, miasto, ulica, kod_pocztowy, nr_budynku) VALUES ({number}, '{region}', '{city}', '{street}', '{postalCode}', '{buildingNumber}')";
+
+				using (MySqlCommand command = new MySqlCommand(query, connection))
+				{
+					int rowsAffected = command.ExecuteNonQuery();
+
+					return number;
+				}
+			}
+		}
+		public async Task<int> GetNewAddressId()
+		{
+			int number = 1;
+
+			using (MySqlConnection connection = new MySqlConnection(connectionString))
+			{
+				connection.Open();
+
+				string query = $"SELECT MAX(Id) AS Id  FROM adresy";
+
+				using (MySqlCommand command = new MySqlCommand(query, connection))
+				{
+					using (MySqlDataReader reader = command.ExecuteReader())
+					{
+						if (reader.Read() && !reader.IsDBNull(reader.GetOrdinal("Id")))
+						{
+							number = reader.GetInt32("Id") + 1;
+						}
+
+					}
+				}
+			}
+
+			return number;
+		}
+	}
 }

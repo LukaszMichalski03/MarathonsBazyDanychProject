@@ -11,5 +11,6 @@ namespace BDProject_MarathonesApp.Interfaces
         Task<List<Score>> GetScoreBoard(int id);
         Task<bool> DeleteRace(int id);
         Task<bool> UpdateRace(int Id, string Name, string Description, double Distance, DateTime Date, int? AddressId, string? Region, string? City, string? Street, string? PostalCode, string? BuildingNumber);
+        Task<bool> CreateRace(string Name, string Description, double Distance, DateTime Date, string? Region, string? City, string? Street, string? PostalCode, string? BuildingNumber);
     }
 }
