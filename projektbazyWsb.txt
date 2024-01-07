@@ -1,0 +1,709 @@
+users{id, login, passw, isAdmin, addressId, clubId}
+races{id, name, description, distance, address, data}
+clubs{id, name, description, address}
+participantsTable{id, raceId, UserId, numerStartowy}// kluczem moze być raceId++UserId
+resultsTable{id, raceId, ParticipantId, place , FinishTime}
+adres{id, wojewodztwo, miasto, ulica, kod-pocztowy, nr_budynku}
+
+DDL:
+CREATE TABLE Adresy (
+    Id INT AUTO_INCREMENT PRIMARY KEY,
+    wojewodztwo VARCHAR(50) NOT NULL,
+    miasto VARCHAR(50) NOT NULL,
+    ulica VARCHAR(50) NOT NULL,
+    kod_pocztowy VARCHAR(6) NOT NULL,
+    nr_budynku VARCHAR(6)
+);
+
+CREATE TABLE Kluby (
+    Id INT AUTO_INCREMENT PRIMARY KEY,
+    nazwa VARCHAR(50) NOT NULL,
+    opis TEXT,
+    adres_id INT
+);
+
+CREATE TABLE Biegi (
+    Id INT AUTO_INCREMENT PRIMARY KEY,
+    nazwa_biegu VARCHAR(50) NOT NULL,
+    opis_biegu TEXT NOT NULL,
+    dystans DOUBLE NOT NULL,
+    adres_biegu INT NOT NULL,
+    data_biegu DATETIME NOT NULL
+);
+
+CREATE TABLE Uzytkownicy (
+    Id INT AUTO_INCREMENT PRIMARY KEY,
+    imie VARCHAR(20) NOT NULL,
+    nazwisko VARCHAR(20) NOT NULL,
+    login VARCHAR(30) NOT NULL,
+    haslo VARCHAR(30) NOT NULL,
+    adres_id INT,
+    klub_id INT
+);
+
+CREATE TABLE Uczestnicy (
+    Id INT AUTO_INCREMENT PRIMARY KEY,
+    bieg_id INT,
+    uzytkownik_id INT,
+    nr_startowy INT CHECK (nr_startowy >= 0)
+);
+
+CREATE TABLE Wyniki (
+    Id INT AUTO_INCREMENT PRIMARY KEY,
+    bieg_id INT,
+    uczestnik_id INT,
+    miejsce INT CHECK (miejsce >= 0),
+    czas_ukonczenia TIME NOT NULL
+);
+
+
+ALTER TABLE Kluby
+ADD FOREIGN KEY (adres_id) REFERENCES Adresy(Id);
+
+ALTER TABLE Biegi
+ADD FOREIGN KEY (adres_biegu) REFERENCES Adresy(Id) ON DELETE CASCADE;
+
+ALTER TABLE Uzytkownicy
+ADD FOREIGN KEY (adres_id) REFERENCES Adresy(Id),
+ADD FOREIGN KEY (klub_id) REFERENCES Kluby(Id) ON DELETE SET NULL;
+
+ALTER TABLE Uczestnicy
+ADD FOREIGN KEY (bieg_id) REFERENCES Biegi(Id) ON DELETE CASCADE,
+ADD FOREIGN KEY (uzytkownik_id) REFERENCES Uzytkownicy(Id) ON DELETE CASCADE,
+ADD CONSTRAINT unique_start_number UNIQUE (bieg_id, nr_startowy);
+
+ALTER TABLE Wyniki
+
+ADD FOREIGN KEY (bieg_id) REFERENCES Biegi(Id) ON DELETE CASCADE,
+ADD FOREIGN KEY (uczestnik_id) REFERENCES Uczestnicy(Id) ON DELETE SET NULL,
+ADD CONSTRAINT unique_place_per_race UNIQUE (miejsce, bieg_id);
+
+
+#dodawanie wartości
+
+INSERT INTO Adresy (wojewodztwo, miasto, ulica, kod_pocztowy, nr_budynku)
+VALUES
+('Mazowieckie', 'Warszawa', 'Aleje Jerozolimskie', '00-001', '123'),
+('Małopolskie', 'Kraków', 'ul. Floriańska', '30-001', '56'),
+('Wielkopolskie', 'Poznań', 'ul. Wielka', '61-001', '789'),
+('Kujawsko-Pomorskie', 'Bydgoszcz', 'ul. Gdańska', '85-001', '24'),
+('Śląskie', 'Katowice', 'ul. Mariacka', '40-001', '7'),
+('Dolnośląskie', 'Wrocław', 'ul. Szkolna', '50-001', '112'),
+('Lubelskie', 'Lublin', 'ul. Zamojska', '20-001', '45'),
+('Łódzkie', 'Łódź', 'ul. Piotrkowska', '90-001', '78'),
+('Podkarpackie', 'Rzeszów', 'ul. Jagiellońska', '35-001', '15'),
+('Pomorskie', 'Gdańsk', 'ul. Długa', '80-001', '99'),
+('Warmińsko-Mazurskie', 'Olsztyn', 'ul. Mazurska', '10-001', '33'),
+('Podlaskie', 'Białystok', 'ul. Piękna', '15-001', '60'),
+('Zachodniopomorskie', 'Szczecin', 'ul. Wojska Polskiego', '70-001', '88'),
+('Opolskie', 'Opole', 'ul. Krakowska', '45-001', '22'),
+('Świętokrzyskie', 'Kielce', 'ul. Sienkiewicza', '25-001', '75'),
+('Mazowieckie', 'Radom', 'ul. Poniatowskiego', '26-001', '42'),
+('Lubuskie', 'Gorzów Wielkopolski', 'ul. Wiosenna', '66-001', '17'),
+('Śląskie', 'Częstochowa', 'ul. Jasna', '42-001', '51'),
+('Kujawsko-Pomorskie', 'Toruń', 'ul. Mickiewicza', '87-001', '123A'),
+('Dolnośląskie', 'Legnica', 'ul. Piastowska', '59-001', '8'),
+('Łódzkie', 'Piotrków Trybunalski', 'ul. Rynek', '97-001', '29'),
+('Podkarpackie', 'Przemyśl', 'ul. Kolejowa', '37-001', '91'),
+('Pomorskie', 'Słupsk', 'ul. Leśna', '76-001', '54'),
+('Warmińsko-Mazurskie', 'Elbląg', 'ul. Kołłątaja', '82-001', '13'),
+('Podlaskie', 'Suwałki', 'ul. Tysiąclecia', '16-001', '72'),
+('Zachodniopomorskie', 'Koszalin', 'ul. Piastowska', '75-001', '111'),
+('Opolskie', 'Nysa', 'ul. Paderewskiego', '48-001', '37'),
+('Świętokrzyskie', 'Sandomierz', 'ul. Słowackiego', '27-001', '68'),
+('Mazowieckie', 'Piaseczno', 'ul. Słoneczna', '05-001', '94'),
+('Podlaskie', 'Białystok', 'ul. Słowackiego', '15-001', '31'),
+('Łódzkie', 'Łódź', 'ul. Piotrkowska', '90-001', '42'),
+('Wielkopolskie', 'Poznań', 'ul. Wielka', '61-001', '53'),
+('Lubelskie', 'Lublin', 'ul. Jagiellońska', '20-001', '64'),
+('Pomorskie', 'Gdańsk', 'ul. Długa', '80-001', '75'),
+('Kujawsko-Pomorskie', 'Bydgoszcz', 'ul. Gdańska', '85-001', '86'),
+('Małopolskie', 'Kraków', 'ul. Floriańska', '30-001', '97'),
+('Warmińsko-Mazurskie', 'Olsztyn', 'ul. Mazurska', '10-001', '108'),
+('Dolnośląskie', 'Wrocław', 'ul. Szkolna', '50-001', '119'),
+('Zachodniopomorskie', 'Szczecin', 'ul. Wojska Polskiego', '70-001', '120'),
+('Śląskie', 'Katowice', 'ul. Mariacka', '40-001', '121'),
+('Opolskie', 'Opole', 'ul. Krakowska', '45-001', '122'),
+('Świętokrzyskie', 'Kielce', 'ul. Sienkiewicza', '25-001', '123'),
+('Lubuskie', 'Gorzów Wielkopolski', 'ul. Wiosenna', '66-001', '124'),
+('Podkarpackie', 'Rzeszów', 'ul. Piękna', '35-001', '125'),
+('Mazowieckie', 'Warszawa', 'ul. Paderewskiego', '00-001', '126');
+
+INSERT INTO Adresy (wojewodztwo, miasto, ulica, kod_pocztowy, nr_budynku)
+VALUES
+('Śląskie', 'Bielsko-Biała', 'ul. Lecha', '43-200', '14'),
+('Kujawsko-Pomorskie', 'Grudziądz', 'ul. Kościuszki', '86-300', '78'),
+('Wielkopolskie', 'Kalisz', 'ul. Cicha', '62-800', '32'),
+('Podkarpackie', 'Tarnobrzeg', 'ul. Słowiańska', '39-400', '5A'),
+('Małopolskie', 'Nowy Sącz', 'ul. Kwiatowa', '33-300', '102'),
+('Lubelskie', 'Chełm', 'ul. Piłsudskiego', '22-100', '45B'),
+('Podlaskie', 'Augustów', 'ul. Konopnickiej', '16-300', '67'),
+('Opolskie', 'Kędzierzyn-Koźle', 'ul. Prusa', '47-200', '21'),
+('Świętokrzyskie', 'Ostrowiec Świętokrzyski', 'ul. Słoneczna', '27-400', '14C'),
+('Mazowieckie', 'Siedlce', 'ul. Zwycięstwa', '08-100', '90'),
+('Lubuskie', 'Nowa Sól', 'ul. Mickiewicza', '67-100', '55'),
+('Warmińsko-Mazurskie', 'Giżycko', 'ul. Portowa', '11-500', '7'),
+('Zachodniopomorskie', 'Kołobrzeg', 'ul. Słowiańska', '78-100', '34'),
+('Dolnośląskie', 'Jelenia Góra', 'ul. Parkowa', '58-500', '12'),
+('Pomorskie', 'Sopot', 'ul. Monte Cassino', '81-718', '23');
+
+INSERT INTO Adresy (wojewodztwo, miasto, ulica, kod_pocztowy, nr_budynku)
+VALUES
+('Kujawsko-Pomorskie', 'Bydgoszcz', 'ul. Fordońska', '85-002', '30'),
+('Mazowieckie', 'Warszawa', 'ul. Marszałkowska', '00-002', '222'),
+('Podkarpackie', 'Rzeszów', 'ul. Dąbrowskiego', '35-002', '17'),
+('Małopolskie', 'Kraków', 'ul. Szewska', '30-002', '45'),
+('Śląskie', 'Katowice', 'ul. 3 Maja', '40-002', '11'),
+('Dolnośląskie', 'Wrocław', 'ul. Krupnicza', '50-002', '88'),
+('Lubelskie', 'Lublin', 'ul. Nadstawna', '20-002', '123B'),
+('Łódzkie', 'Łódź', 'ul. Mickiewicza', '90-002', '55'),
+('Podlaskie', 'Białystok', 'ul. Bema', '15-002', '77'),
+('Pomorskie', 'Gdańsk', 'ul. Kartuska', '80-002', '101'),
+('Warmińsko-Mazurskie', 'Olsztyn', 'ul. Sikorskiego', '10-002', '8'),
+('Zachodniopomorskie', 'Szczecin', 'ul. Dworcowa', '70-002', '19'),
+('Opolskie', 'Opole', 'ul. Słowiańska', '45-002', '37'),
+('Świętokrzyskie', 'Kielce', 'ul. Mickiewicza', '25-002', '79'),
+('Lubuskie', 'Gorzów Wielkopolski', 'ul. Pocztowa', '66-002', '124A');
+
+INSERT INTO Adresy (wojewodztwo, miasto, ulica, kod_pocztowy, nr_budynku) VALUES
+('Pomorskie', 'Gdynia', 'Aleja Zwycięstwa', '81-451', '10'),
+('Śląskie', 'Żywiec', 'ul. Piękna', '34-300', '5'),
+('Dolnośląskie', 'Sobótka', 'Plac Wolności', '55-050', '22'),
+('Kujawsko-Pomorskie', 'Toruń', 'ul. Mickiewicza', '87-100', '30'),
+('Łódzkie', 'Pabianice', 'ul. Słowiańska', '95-200', '12'),
+('Łódzkie', 'Łódź', 'ul. Piotrkowska', '90-001', '45');
+
+INSERT INTO Adresy (wojewodztwo, miasto, ulica, kod_pocztowy) VALUES
+
+('Mazowieckie', 'Warszawa', 'Plac Zamkowy', '00-277'),
+('Pomorskie', 'Gdańsk', 'Główne Miasto', '80-836'),
+('Kujawsko-Pomorskie', 'Bydgoszcz', 'Park Myślęcinek', '85-001'),
+('Wielkopolskie', 'Poznań', 'Park Cytadela', '61-778'),
+('Małopolskie', 'Kraków', 'Błonia', '30-547'),
+('Wielkopolskie', 'Poznań', 'Stary Rynek', '61-772'),
+('Mazowieckie', 'Warszawa', 'Stadion Narodowy', '03-615'),
+('Lubelskie', 'Lublin', 'Plac Zamkowy', '20-001'),
+('Dolnośląskie', 'Wrocław', 'Rynek', '50-956'),
+('Łódzkie', 'Łódź', 'Piotrkowska', '90-001'),
+('Mazowieckie', 'Warszawa', 'Stadion Narodowy', '03-615'),
+('Pomorskie', 'Gdańsk', 'Główne Miasto', '80-858'),
+('Małopolskie', 'Kraków', 'Rynek Główny', '31-011'),
+('Dolnośląskie', 'Wrocław', 'Rynek', '50-101'),
+('Łódzkie', 'Łódź', 'Piotrkowska', '90-001'),
+('Mazowieckie', 'Warszawa', 'Stadion Narodowy', '03-615'),
+('Małopolskie', 'Kraków', 'Rynek Główny', '	31-011'),
+('Dolnośląskie', 'Wrocław', 'Rynek', '	50-101'),
+('Łódzkie', 'Łódź', 'Piotrkowska', '90-001'),
+('Wielkopolskie', 'Poznań', 'Stary Rynek', '61-772'),
+('Dolnośląskie', 'Karpacz', 'Konstytucji 3 Maja', '58-540'),
+('Dolnośląskie', 'Szklarska Poręba', 'Piechowice', '42-450'),
+('Mazowieckie', 'Białobrzegi', 'Kampinoski Park Narodowy', '05-552');
+
+INSERT INTO kluby (adres_id, nazwa, opis)
+VALUES
+(30, 'Białystok Runners', 'Klub sportowy w Białymstoku. Bieganie, fitness, wspólne treningi. Dołącz do nas!'),
+(31, 'Łódź Runners', 'Klub biegaczy w Łodzi. Zapraszamy na treningi i wydarzenia sportowe.'),
+(32, 'Poznań Athletics', 'Klub sportowy w Poznaniu. Bieganie, kolarstwo, pływanie - wszystko dla aktywnych.'),
+(33, 'Lublin Active', 'Klub sportowy w Lublinie. Bieganie, siłownia, grupowe zajęcia. Dołącz do naszej społeczności!'),
+(34, 'Gdańsk Fitness Club', 'Klub fitness w Gdańsku. Różnorodne zajęcia sportowe dla wszystkich poziomów.'),
+(35, 'Bydgoszcz Endurance', 'Klub biegowy w Bydgoszczy. Zapraszamy na treningi i maratony.'),
+(36, 'Kraków Sports Society', 'Klub sportowy w Krakowie. Wspólne treningi, wyjazdy na zawody. Dołącz do nas!'),
+(37, 'Olsztyn Active Team', 'Aktywny klub sportowy w Olsztynie. Bieganie, rower, nordic walking.'),
+(38, 'Wrocław Fit Club', 'Klub fitness we Wrocławiu. Zajęcia dla każdego - od początkujących po zaawansowanych.'),
+(39, 'Szczecin Running Crew', 'Klub biegowy w Szczecinie. Treningi w plenerze i udział w biegach.'),
+(40, 'Katowice Athletics Club', 'Klub lekkoatletyczny w Katowicach. Zajęcia dla dzieci i dorosłych.'),
+(41, 'Opole Sports Team', 'Klub sportowy w Opolu. Fitness, bieganie, siłownia - wszystko w jednym miejscu.'),
+(42, 'Kielce Fit Tribe', 'Tribalny klub fitness w Kielcach. Unikalne zajęcia dla każdego.'),
+(43, 'Gorzów Wielkopolski Runners', 'Klub biegaczy w Gorzowie Wielkopolskim. Bieganie dla zdrowia i przyjemności.'),
+(44, 'Rzeszów Active Club', 'Klub sportowy w Rzeszowie. Wspólne treningi i udział w lokalnych wydarzeniach sportowych.'),
+(45, 'Warszawa Runners Society', 'Stowarzyszenie biegowe w Warszawie. Biegaj z nami i rozwijaj swoje umiejętności.');
+
+INSERT INTO Uzytkownicy (imie, nazwisko, login, haslo, adres_id, klub_id)
+VALUES
+('Adam', 'Kowalski', 'adam.kowalski@login.pl', 'haslo123',1 ,16 ),
+('Ewa', 'Nowak', 'ewa.nowak@login.pl', 'haslo123',2 ,7 ),
+('Jan', 'Wiśniewski', 'jan.wisniewski@login.pl', 'haslo123',3 ,3 ),
+('Anna', 'Lewandowska', 'anna.lewandowska@login.pl', 'haslo123',4 ,6 ),
+('Piotr', 'Dąbrowski', 'piotr.dabrowski@login.pl', 'haslo123',5 ,11 ),
+('Zofia', 'Wójcik', 'zofia.wojcik@login.pl', 'haslo123',6 ,9 ),
+('Krzysztof', 'Kamiński', 'krzysztof.kaminski@login.pl', 'haslo123',7 ,4 ),
+('Maria', 'Kowalczyk', 'maria.kowalczyk@login.pl', 'haslo123',8 ,2 ),
+('Stanisław', 'Zieliński', 'stanislaw.zielinski@login.pl', 'haslo123',9 ,15 ),
+('Małgorzata', 'Szymańska', 'malgorzata.szymanska@login.pl', 'haslo123',10 ,5 ),
+('Andrzej', 'Woźniak', 'andrzej.wozniak@login.pl', 'haslo123',11 ,8 ),
+('Katarzyna', 'Dudek', 'katarzyna.dudek@login.pl', 'haslo123',12 ,1 ),
+('Michał', 'Adamczyk', 'michal.adamczyk@login.pl', 'haslo123',13 ,10 ),
+('Elżbieta', 'Kubicka', 'elzbieta.kubicka@login.pl', 'haslo123',14 ,12 ),
+('Paweł', 'Kowal', 'pawel.kowal@login.pl', 'haslo123',15 ,13 ),
+('Joanna', 'Majewska', 'joanna.majewska@login.pl', 'haslo123',16 ,16 ),
+('Tomasz', 'Olejnik', 'tomasz.olejnik@login.pl', 'haslo123',17 ,14 ),
+('Agata', 'Jankowska', 'agata.jankowska@login.pl', 'haslo123',18 ,11 ),
+('Marcin', 'Kaczmarek', 'marcin.kaczmarek@login.pl', 'haslo123',19 ,6 ),
+('Monika', 'Wróbel', 'monika.wrobel@login.pl', 'haslo123',20 ,9 ),
+('Grzegorz', 'Kucharski', 'grzegorz.kucharski@login.pl', 'haslo123',21 ,2 ),
+('Marta', 'Kowalik', 'marta.kowalik@login.pl', 'haslo123',22 ,15 ),
+('Marek', 'Klimek', 'marek.klimek@login.pl', 'haslo123',23 ,5 ),
+('Magdalena', 'Głowacka', 'magdalena.glowacka@login.pl', 'haslo123',24 ,8 ),
+('Robert', 'Zając', 'robert.zajac@login.pl', 'haslo123',25 ,1 ),
+('Natalia', 'Pawłowska', 'natalia.pawlowska@login.pl', 'haslo123',26 ,10 ),
+('Dariusz', 'Michalak', 'dariusz.michalak@login.pl', 'haslo123',27 ,12 ),
+('Kinga', 'Jastrzębska', 'kinga.jastrzebska@login.pl', 'haslo123',28 ,13 ),
+('Jacek', 'Zalewski', 'jacek.zalewski@login.pl', 'haslo123',29 ,16 );
+INSERT INTO Uzytkownicy (imie, nazwisko, login, haslo, adres_id)
+VALUES
+('Andrzej', 'Nowicki', 'andrzej.nowicki@login.pl', 'haslo123', 46),
+('Karolina', 'Pawlak', 'karolina.pawlak@login.pl', 'haslo123', 47),
+('Rafał', 'Krawczyk', 'rafal.krawczyk@login.pl', 'haslo123', 48),
+('Alicja', 'Zakrzewska', 'alicja.zakrzewska@login.pl', 'haslo123', 49),
+('Piotr', 'Witkowski', 'piotr.witkowski@login.pl', 'haslo123', 50),
+('Natalia', 'Kowalewska', 'natalia.kowalewska@login.pl', 'haslo123', 51),
+('Szymon', 'Grabowski', 'szymon.grabowski@login.pl', 'haslo123', 52),
+('Kamila', 'Sikora', 'kamila.sikora@login.pl', 'haslo123', 53),
+('Artur', 'Gajewski', 'artur.gajewski@login.pl', 'haslo123', 54),
+('Izabela', 'Jóźwiak', 'izabela.jozwiak@login.pl', 'haslo123', 55),
+('Mateusz', 'Olszewski', 'mateusz.olszewski@login.pl', 'haslo123', 56),
+('Karolina', 'Jabłońska', 'karolina.jablonska@login.pl', 'haslo123', 57),
+('Patryk', 'Zawadzki', 'patryk.zawadzki@login.pl', 'haslo123', 58),
+('Oliwia', 'Kaczmarczyk', 'oliwia.kaczmarczyk@login.pl', 'haslo123', 59),
+('Paweł', 'Kołodziej', 'pawel.kolodziej@login.pl', 'haslo123', 60),
+('Magdalena', 'Sobczyk', 'magdalena.sobczyk@login.pl', 'haslo123', 61),
+('Kamil', 'Kołodziejczyk', 'kamil.kolodziejczyk@login.pl', 'haslo123', 62),
+('Aleksandra', 'Zielińska', 'aleksandra.zielinska@login.pl', 'haslo123', 63),
+('Damian', 'Kowalik', 'damian.kowalik@login.pl', 'haslo123', 64),
+('Natalia', 'Zielińska', 'natalia.zielinska@login.pl', 'haslo123', 65),
+('Hubert', 'Szymczak', 'hubert.szymczak@login.pl', 'haslo123', 66),
+('Marta', 'Lipińska', 'marta.lipinska@login.pl', 'haslo123', 67),
+('Piotr', 'Zając', 'piotr.zajac@login.pl', 'haslo123', 68),
+('Julia', 'Kaczmarek', 'julia.kaczmarek@login.pl', 'haslo123', 69),
+('Kacper', 'Sawicki', 'kacper.sawicki@login.pl', 'haslo123', 70),
+('Martyna', 'Baranowska', 'martyna.baranowska@login.pl', 'haslo123', 71),
+('Filip', 'Lisowski', 'filip.lisowski@login.pl', 'haslo123', 72),
+('Dominika', 'Czarnecka', 'dominika.czarnecka@login.pl', 'haslo123', 73),
+('Kamil', 'Kurowski', 'kamil.kurowski@login.pl', 'haslo123', 74),
+('Weronika', 'Kozłowska', 'weronika.kozlowska@login.pl', 'haslo123', 75);
+
+
+INSERT INTO Uzytkownicy (imie, nazwisko, login, haslo)
+VALUES
+('Mariusz', 'Kowalczyk', 'mariusz.kowalczyk@login.pl', 'haslo123'),
+('Martyna', 'Olszewska', 'martyna.olszewska@login.pl', 'haslo123'),
+('Radosław', 'Nowakowski', 'radoslaw.nowakowski@login.pl', 'haslo123'),
+('Karolina', 'Zielińska', 'karolina.zielinska@login.pl', 'haslo123'),
+('Bartosz', 'Wójcik', 'bartosz.wojcik@login.pl', 'haslo123'),
+('Dominika', 'Kamińska', 'dominika.kaminska@login.pl', 'haslo123'),
+('Przemysław', 'Kowalski', 'przemyslaw.kowalski@login.pl', 'haslo123'),
+('Katarzyna', 'Lewandowska', 'katarzyna.lewandowska@login.pl', 'haslo123'),
+('Tomasz', 'Jóźwiak', 'tomasz.jozwiak@login.pl', 'haslo123'),
+('Aleksandra', 'Kucharska', 'aleksandra.kucharska@login.pl', 'haslo123'),
+('Łukasz', 'Majewski', 'lukasz.majewski@login.pl', 'haslo123'),
+('Patrycja', 'Zając', 'patrycja.zajac@login.pl', 'haslo123'),
+('Wojciech', 'Adamczyk', 'wojciech.adamczyk@login.pl', 'haslo123'),
+('Agnieszka', 'Kubicka', 'agnieszka.kubicka@login.pl', 'haslo123'),
+('Marek', 'Kowal', 'marek.kowal@login.pl', 'haslo123'),
+('Olga', 'Majewska', 'olga.majewska@login.pl', 'haslo123'),
+('Igor', 'Olejnik', 'igor.olejnik@login.pl', 'haslo123'),
+('Klaudia', 'Jankowska', 'klaudia.jankowska@login.pl', 'haslo123'),
+('Mikołaj', 'Wójtowicz', 'mikolaj.wojtowicz@login.pl', 'haslo123');
+
+INSERT INTO biegi (adres_biegu, data_biegu, nazwa_biegu, dystans, opis_biegu) VALUES 
+(76, '2023-02-11 11:00:00', 'Bieg Urodzinowy Gdyni', 10.0, 'Jubileuszowy bieg po malowniczych ulicach Gdyni, z okazji urodzin miasta.'),
+(77, '2023-03-17 10:00:00', '23. PKO Półmaraton dookoła Jeziora Żywieckiego', 21.097, 'Półmaraton wokół malowniczego Jeziora Żywieckiego, pełen uroków przyrody.'),
+(78, '2023-03-23 10:00:00', '16 Nowalijka Półmaraton Ślężański', 21.097, 'Półmaraton z widokiem na Górę Ślężę, przez malownicze okolice Dolnego Śląska.'),
+(79, '2023-05-23 09:00:00', 'Mistrzostwa Europy w maratonie Masters', 42.195, 'Mistrzostwa Europy dla dojrzałych biegaczy, pełne sportowej rywalizacji i pasji.'),
+(80, '2023-03-24 10:00:00', '12 Pabianicki Półmaraton', 21.097, 'Tradycyjny półmaraton przez urokliwe zakątki Pabianic.'),
+(81, '2023-04-07 09:00:00', '12 DOZ Maraton Łódź', 42.195, 'Maraton biegnący ulicami Łodzi, przecinający najciekawsze miejsca miasta.'),
+(82, '2023-08-07 12:00:00', 'Bieg Niepodległości w Warszawie', 5.0, 'Bieg upamiętniający rocznicę Niepodległości Polski, trasa przez historyczne miejsca Warszawy.'),
+
+(83, '2024-09-14 10:00:00', 'Bieg Ulicą Pięciu Rogów w Gdańsku', 5.0, 'Bieg przez pięć historycznych dzielnic Gdańska, pełen lokalnych atrakcji.'),
+(84, '2024-10-23 10:00:00', 'Bieg Chemiczny w Bydgoszczy', 5.0, 'Bieg wokół Bydgoszczy, gdzie uczestnicy eksplorują urokliwe zakątki miasta.'),
+(85, '2024-11-06 10:00:00', 'Bieg Parkrun Poznań', 5.0, 'Szybki bieg w parku Cytadela, idealny na poprawę osobistych rekordów.'),
+(86, '2024-12-02 10:00:00', 'Bieg Trzech Krzyży w Krakowie', 5.0, 'Bieg przez historyczne miejsca Krakowa, włączając w to Rynek Główny i Zamek Królewski.'),
+(87, '2024-06-16 10:00:00', 'PKO Poznań', 10.0, 'Tradycyjny bieg w sercu Poznania, z udziałem licznych biegaczy i kibiców.'),
+(88, '2024-07-29 10:00:00', 'Bieg Warszawski', 10.0, 'Bieg przez najbardziej charakterystyczne miejsca Warszawy, zakończony na Stadionie Narodowym.'),
+(89, '2024-08-25 10:00:00', 'Bieg Katorżnika w Lublinie', 10.0, 'Bieg w pięknym Lublinie, z okazji święta miasta.'),
+(90, '2024-09-27 18:00:00', 'Bieg Sylwestrowy w Wrocławiu', 10.0, 'Bieg w atmosferze sylwestrowej, zakończony widowiskowym pokazem sztucznych ogni.'),
+(91, '2024-10-22 22:00:00', 'Bieg Nocny w Łodzi', 10.0, 'Bieg nocny przez ulice Łodzi, oświetlony kolorowymi światłami i latarniami ulicznymi.'),
+(92, '2024-06-18 10:00:00', 'Półmaraton Warszawski', 21.0975, 'Półmaraton z widokiem na najważniejsze atrakcje Warszawy, takie jak Zamek Królewski czy Nowy Świat.'),
+(93, '2024-07-12 10:00:00', 'Półmaraton Gdański', 21.0975, 'Półmaraton przez Gdańsk, z widokiem na Motławę i Główne Miasto.'),
+(94, '2024-08-08 10:00:00', 'Półmaraton Krakowski', 21.0975, 'Półmaraton przez urokliwe zaułki i historyczne miejsca Krakowa.'),
+(95, '2024-09-02 10:00:00', 'Półmaraton Wrocławski', 21.0975, 'Półmaraton w klimatycznym Wrocławiu, zakończony na Rynku.'),
+(96, '2024-10-17 10:00:00', 'Półmaraton Łódzki', 21.0975, 'Półmaraton przez centrum Łodzi, ulicą Piotrkowską.'),
+(97, '2024-05-09 09:00:00', 'Maraton Warszawski', 42.195, 'Klasyczny maraton przez stolicę Polski, z widokiem na Park Łazienkowski i Starówkę.'),
+(98, '2024-06-30 09:00:00', 'Maraton Krakowski', 42.195, 'Maraton wokół historycznego Krakowa, z widokiem na Wawel.'),
+(99, '2024-08-28 10:00:00', 'Maraton Wrocławski', 42.195, 'Maraton biegnący przez najważniejsze punkty Wrocławia, włączając w to Ostrów Tumski.'),
+(100, '2024-10-11 09:00:00', 'Maraton Łódzki', 42.195, 'Maraton w sercu Łodzi, z trasą przechodzącą przez najbardziej znane ulice miasta.'),
+(101, '2024-11-16 10:00:00', 'Maraton Poznański', 42.195, 'Maraton przez malownicze tereny Poznania, zakończony na Starym Rynku.'),
+(102, '2024-08-03 06:00:00', 'Ultramaraton Karkonoski', 80, 'Niezwykle wytrzymałościowy bieg w malowniczych Karkonoszach, z różnorodnym terenem trasy.'),
+(103, '2024-10-17 05:00:00', 'Ultramaraton Sudecki', 120, 'Ekstremalny ultramaraton w Górach Sudeckich, przeznaczony dla najbardziej doświadczonych biegaczy.'),
+
+(104, '2024-06-22 08:00:00', 'Ultramaraton Puszczy Kampinoskiej', 50, 'Przygoda biegowa w Puszczy Kampinoskiej, z trasą wiodącą przez leśne ścieżki i polne drogi.');
+
+INSERT INTO uczestnicy (bieg_id, uzytkownik_id, nr_startowy) VALUES
+(1, 1, 1), (1, 2, 2), (1, 3, 3), (1, 4, 4), (1, 5, 5), (1, 6, 6), (1, 7, 7), (1, 8, 8), (1, 9, 9), (1, 10, 10), (1, 11, 11), (1, 12, 12), (1, 13, 13), (1, 14, 14), (1, 15, 15),
+ (1, 16, 16), (1, 17, 17), (1, 18, 18), (1, 19, 19), (1, 20, 20), (1, 21, 21), (1, 22, 22), (1, 23, 23), (1, 24, 24), (1, 25, 25), (1, 26, 26), (1, 27, 27), (1, 28, 28), (1, 29, 29),
+ (1, 30, 30);
+INSERT INTO uczestnicy (bieg_id, uzytkownik_id, nr_startowy)
+VALUES
+(2, 14, 1),(2, 26, 2),(2, 42, 3),(2, 7, 4),(2, 55, 5),(2, 18, 6),(2, 63, 7),
+(2, 35, 8),(2, 10, 9),(2, 50, 10),(2, 2, 11),(2, 71, 12),(2, 38, 13),(2, 19, 14),
+(2, 47, 15),(2, 30, 16),(2, 3, 17),(2, 58, 18),(2, 23, 19),(2, 48, 20),(2, 12, 21),
+(2, 64, 22),(2, 33, 23),(2, 9, 24),(2, 54, 25),(2, 27, 26),(2, 44, 27),
+(2, 6, 28),(2, 69, 29),(2, 15, 30);
+INSERT INTO uczestnicy (bieg_id, uzytkownik_id, nr_startowy)
+VALUES
+(3, 34, 1),(3, 51, 2),(3, 16, 3),(3, 72, 4),(3, 9, 5),(3, 43, 6),(3, 27, 7),(3, 59, 8),(3, 14, 9),(3, 48, 10),(3, 21, 11),
+(3, 67, 12),(3, 38, 13),(3, 5, 14),(3, 29, 15),(3, 55, 16),(3, 18, 17),(3, 41, 18),(3, 12, 19),(3, 63, 20),(3, 24, 21),
+(3, 52, 22),(3, 8, 23),(3, 36, 24),(3, 68, 25),(3, 23, 26),(3, 46, 27),(3, 3, 28),(3, 31, 29),(3, 57, 30);
+INSERT INTO uczestnicy (bieg_id, uzytkownik_id, nr_startowy)
+VALUES
+(5, 27, 1),(5, 10, 2),(5, 43, 3),(5, 18, 4),(5, 36, 5),(5, 49, 6),(5, 7, 7),(5, 54, 8),(5, 29, 9),(5, 61, 10),(5, 20, 11),
+(5, 46, 12),(5, 13, 13),(5, 38, 14),(5, 5, 15),(5, 32, 16),(5, 56, 17),(5, 23, 18),(5, 48, 19),(5, 15, 20),(5, 40, 21),
+(5, 69, 22),(5, 24, 23),(5, 58, 24),(5, 11, 25),(5, 45, 26),(5, 2, 27),(5, 35, 28),(5, 64, 29),(5, 31, 30);
+INSERT INTO uczestnicy (bieg_id, uzytkownik_id, nr_startowy)
+VALUES
+(6, 25, 1),(6, 58, 2),(6, 14, 3),(6, 46, 4),(6, 32, 5),(6, 8, 6),(6, 53, 7),(6, 20, 8),(6, 41, 9),(6, 17, 10),(6, 38, 11),
+(6, 5, 12),(6, 63, 13),(6, 29, 14),(6, 54, 15),(6, 11, 16),(6, 36, 17),(6, 62, 18),(6, 19, 19),(6, 44, 20),(6, 2, 21),
+(6, 49, 22),(6, 26, 23),(6, 57, 24),(6, 13, 25),(6, 31, 26),(6, 47, 27),(6, 10, 28),(6, 35, 29),(6, 16, 30);
+
+INSERT INTO uczestnicy (bieg_id, uzytkownik_id, nr_startowy)
+VALUES
+(4, 41, 1),(4, 17, 2),(4, 63, 3),(4, 28, 4),(4, 52, 5),(4, 9, 6),(4, 36, 7),(4, 19, 8),(4, 44, 9),(4, 7, 10),(4, 30, 11),
+(4, 56, 12),(4, 24, 13),(4, 49, 14),(4, 12, 15),(4, 37, 16),(4, 5, 17),(4, 61, 18),(4, 16, 19),(4, 40, 20),(4, 68, 21),
+(4, 33, 22),(4, 58, 23),(4, 13, 24),(4, 47, 25),(4, 23, 26),(4, 8, 27),(4, 55, 28),(4, 31, 29),(4, 20, 30);
+
+INSERT INTO uczestnicy (bieg_id, uzytkownik_id, nr_startowy)
+VALUES
+(7, 42, 1),(7, 18, 2),(7, 64, 3),(7, 29, 4),(7, 53, 5),(7, 10, 6),(7, 37, 7),(7, 20, 8),(7, 45, 9),(7, 9, 10),(7, 34, 11),(7, 59, 12),
+(7, 14, 13),(7, 39, 14),(7, 5, 15),(7, 31, 16),(7, 55, 17),(7, 22, 18),(7, 47, 19),(7, 16, 20),(7, 41, 21),(7, 68, 22),(7, 23, 23),
+(7, 57, 24),(7, 12, 25),(7, 46, 26),(7, 3, 27),(7, 36, 28),(7, 63, 29),(7, 30, 30);
+
+INSERT INTO uczestnicy (bieg_id, uzytkownik_id, nr_startowy)
+VALUES
+(22, 63, 1),(22, 28, 2),(22, 46, 3),(22, 8, 4),(22, 35, 5),(22, 14, 6),(22, 52, 7),(22, 19, 8),(22, 39, 9),(22, 12, 10),(22, 57, 11),
+(22, 23, 12),(22, 49, 13),(22, 15, 14),(22, 41, 15),(22, 5, 16),(22, 32, 17),(22, 68, 18),(22, 20, 19),(22, 55, 20),(22, 9, 21),
+(22, 36, 22),(22, 61, 23),(22, 26, 24),(22, 42, 25),(22, 7, 26),(22, 53, 27),(22, 16, 28),(22, 31, 29),(22, 58, 30);
+
+INSERT INTO uczestnicy (bieg_id, uzytkownik_id, nr_startowy)
+VALUES
+(12, 21, 1),(12, 47, 2),(12, 14, 3),(12, 39, 4),(12, 32, 5),(12, 8, 6),(12, 54, 7),(12, 19, 8),(12, 42, 9),(12, 5, 10),(12, 30, 11),
+(12, 56, 12),(12, 24, 13),(12, 49, 14),(12, 9, 15),(12, 36, 16),(12, 61, 17),(12, 16, 18),(12, 43, 19),(12, 11, 20),(12, 34, 21),
+(12, 68, 22),(12, 25, 23),(12, 58, 24),(12, 13, 25),(12, 46, 26),(12, 3, 27),(12, 38, 28),(12, 63, 29),(12, 26, 30);
+
+INSERT INTO uczestnicy (bieg_id, uzytkownik_id, nr_startowy)
+VALUES
+(17, 29, 1),(17, 51, 2),(17, 16, 3),(17, 43, 4),(17, 8, 5),(17, 36, 6),(17, 21, 7),(17, 55, 8),(17, 14, 9),(17, 47, 10),(17, 22, 11),
+(17, 67, 12),(17, 38, 13),(17, 5, 14),(17, 30, 15),(17, 58, 16),(17, 13, 17),(17, 46, 18),(17, 19, 19),(17, 54, 20),(17, 9, 21),
+(17, 37, 22),(17, 62, 23),(17, 26, 24),(17, 49, 25),(17, 4, 26),(17, 31, 27),(17, 56, 28),(17, 11, 29),(17, 42, 30);
+
+INSERT INTO uczestnicy (bieg_id, uzytkownik_id, nr_startowy)
+VALUES
+(29, 45, 1),(29, 20, 2),(29, 68, 3),(29, 33, 4),(29, 57, 5),(29, 12, 6),(29, 39, 7),(29, 24, 8),(29, 49, 9),(29, 8, 10),(29, 36, 11),
+(29, 61, 12),(29, 16, 13),(29, 41, 14),(29, 5, 15),(29, 32, 16),(29, 56, 17),(29, 21, 18),(29, 46, 19),(29, 11, 20),(29, 35, 21),
+(29, 64, 22),(29, 29, 23),(29, 54, 24),(29, 9, 25),(29, 42, 26),(29, 7, 27),(29, 55, 28),(29, 28, 29),(29, 63, 30);
+
+INSERT INTO uczestnicy (bieg_id, uzytkownik_id, nr_startowy)
+VALUES
+(23, 54, 1),(23, 30, 2),(23, 14, 3),(23, 41, 4),(23, 24, 5),(23, 9, 6),(23, 56, 7),(23, 21, 8),(23, 46, 9),(23, 5, 10),(23, 33, 11),
+(23, 58, 12),(23, 13, 13),(23, 38, 14),(23, 4, 15),(23, 31, 16),(23, 64, 17),(23, 19, 18),(23, 43, 19),(23, 11, 20),(23, 36, 21),(23, 62, 22),(23, 27, 23),(23, 49, 24),
+(23, 8, 25),(23, 51, 26),(23, 6, 27),(23, 57, 28),(23, 22, 29),(23, 67, 30);
+
+INSERT INTO uczestnicy (bieg_id, uzytkownik_id, nr_startowy)
+VALUES
+(18, 25, 1),(18, 50, 2),(18, 13, 3),(18, 38, 4),(18, 29, 5),(18, 7, 6),(18, 45, 7),(18, 21, 8),(18, 56, 9),(18, 34, 10),
+(18, 59, 11),(18, 16, 12),(18, 41, 13),(18, 4, 14),(18, 27, 15);
+
+INSERT INTO uczestnicy (bieg_id, uzytkownik_id, nr_startowy)
+VALUES
+(13, 44, 1),(13, 18, 2),(13, 63, 3),(13, 29, 4),(13, 52, 5),(13, 9, 6),(13, 36, 7),(13, 19, 8),(13, 47, 9),(13, 7, 10),
+(13, 30, 11),(13, 56, 12),(13, 24, 13),(13, 49, 14),(13, 12, 15);
+
+INSERT INTO uczestnicy (bieg_id, uzytkownik_id, nr_startowy)
+VALUES
+(27, 23, 1),(27, 58, 2),(27, 14, 3),(27, 46, 4),(27, 32, 5),(27, 8, 6),(27, 53, 7),(27, 20, 8),(27, 41, 9),(27, 17, 10),
+(27, 38, 11),(27, 5, 12),(27, 63, 13),(27, 29, 14),(27, 54, 15);
+
+INSERT INTO uczestnicy (bieg_id, uzytkownik_id, nr_startowy)
+VALUES
+(19, 35, 1),(19, 50, 2),(19, 15, 3),(19, 40, 4),(19, 27, 5),(19, 5, 6),(19, 54, 7),(19, 20, 8),(19, 46, 9),
+(19, 10, 10),(19, 33, 11),(19, 58, 12),(19, 13, 13),(19, 38, 14),(19, 3, 15);
+
+INSERT INTO uczestnicy (bieg_id, uzytkownik_id, nr_startowy)
+VALUES
+(14, 26, 1),(14, 59, 2),(14, 13, 3),(14, 47, 4),(14, 33, 5),(14, 8, 6),(14, 54, 7),(14, 21, 8),(14, 41, 9),
+(14, 18, 10),(14, 37, 11),(14, 63, 12),(14, 16, 13),(14, 49, 14),(14, 12, 15);
+
+INSERT INTO uczestnicy (bieg_id, uzytkownik_id, nr_startowy)
+VALUES
+(24, 48, 1),(24, 13, 2),(24, 61, 3),(24, 26, 4),(24, 54, 5),(24, 8, 6),(24, 39, 7),(24, 24, 8),
+(24, 49, 9),(24, 7, 10),(24, 33, 11),(24, 58, 12),(24, 16, 13),(24, 41, 14),(24, 5, 15);
+
+INSERT INTO uczestnicy (bieg_id, uzytkownik_id, nr_startowy)
+VALUES
+(20, 36, 1),(20, 62, 2),(20, 17, 3),(20, 42, 4),(20, 25, 5),(20, 8, 6),(20, 53, 7),(20, 20, 8),
+(20, 46, 9),(20, 11, 10);
+
+INSERT INTO uczestnicy (bieg_id, uzytkownik_id, nr_startowy)
+VALUES
+(8, 28, 1),(8, 50, 2),(8, 14, 3),(8, 39, 4),(8, 32, 5),(8, 7, 6),(8, 53, 7),
+(8, 19, 8),(8, 44, 9),(8, 10, 10);
+
+INSERT INTO uczestnicy (bieg_id, uzytkownik_id, nr_startowy)
+VALUES
+(15, 41, 1),(15, 16, 2),(15, 62, 3),(15, 28, 4),(15, 54, 5),(15, 8, 6),(15, 36, 7),
+(15, 21, 8),(15, 46, 9),(15, 11, 10);
+
+INSERT INTO uczestnicy (bieg_id, uzytkownik_id, nr_startowy)
+VALUES
+(25, 43, 1),(25, 18, 2),(25, 63, 3),(25, 29, 4),(25, 52, 5),(25, 9, 6),(25, 36, 7),
+(25, 19, 8),(25, 47, 9),(25, 7, 10);
+
+INSERT INTO uczestnicy (bieg_id, uzytkownik_id, nr_startowy)
+VALUES
+(28, 52, 1),(28, 27, 2),(28, 63, 3),(28, 38, 4),(28, 10, 5),(28, 56, 6),
+(28, 21, 7),(28, 46, 8),(28, 33, 9),(28, 15, 10);
+
+INSERT INTO uczestnicy (bieg_id, uzytkownik_id, nr_startowy)
+VALUES
+(21, 36, 1),(21, 62, 2),(21, 17, 3),(21, 42, 4),(21, 25, 5),(21, 8, 6),
+(21, 53, 7),(21, 20, 8),(21, 46, 9),(21, 11, 10);
+
+INSERT INTO uczestnicy (bieg_id, uzytkownik_id, nr_startowy)
+VALUES
+(16, 41, 1),(16, 16, 2),(16, 62, 3),(16, 28, 4),(16, 54, 5),(16, 8, 6),(16, 36, 7),(16, 21, 8),(16, 46, 9),(16, 11, 10);
+
+# wyniki
+INSERT INTO wyniki (bieg_id, uczestnik_id, czas_ukonczenia, miejsce)
+VALUES
+(1, 1, '00:28:03', 1),
+(1, 2, '00:29:12', 2),
+(1, 3, '00:30:14', 3),
+(1, 4, '00:31:50', 4),
+(1, 5, '00:32:20', 5),
+(1, 6, '00:33:35', 6),
+(1, 7, '00:34:15', 7),
+(1, 8, '00:35:46', 8),
+(1, 9, '00:36:36', 9),
+(1, 10, '00:37:24', 10),
+(1, 11, '00:38:20', 11),
+(1, 12, '00:39:10', 12),
+(1, 13, '00:40:25', 13),
+(1, 14, '00:41:02', 14),
+(1, 15, '00:42:01', 15),
+(1, 16, '00:43:05', 16),
+(1, 17, '00:44:10', 17),
+(1, 18, '00:45:50', 18),
+(1, 19, '00:46:23', 19),
+(1, 20, '00:47:32', 20),
+(1, 21, '00:48:45', 21),
+(1, 22, '00:49:14', 22),
+(1, 23, '00:50:16', 23),
+(1, 24, '00:51:54', 24),
+(1, 25, '00:52:43', 25),
+(1, 26, '00:53:25', 26),
+(1, 27, '00:54:13', 27),
+(1, 28, '00:55:12', 28),
+(1, 29, '01:00:34', 29),
+(1, 30, '01:04:58', 30);
+
+
+INSERT INTO wyniki (bieg_id, uczestnik_id, czas_ukonczenia, miejsce)
+VALUES
+(2, 31, '01:13:15', 1),
+(2, 32, '01:17:30', 2),
+(2, 33, '01:23:45', 3),
+(2, 34, '01:34:30', 4),
+(2, 35, '01:38:45', 5),
+(2, 36, '01:41:15', 6),
+(2, 37, '01:53:00', 7),
+(2, 38, '01:55:45', 8),
+(2, 39, '01:58:30', 9),
+(2, 40, '02:01:15', 10),
+(2, 41, '02:13:00', 11),
+(2, 42, '02:16:15', 12),
+(2, 43, '02:18:00', 13),
+(2, 44, '02:26:45', 14),
+(2, 45, '02:28:30', 15),
+(2, 46, '02:34:15', 16),
+(2, 47, '02:37:00', 17),
+(2, 48, '02:39:45', 18),
+(2, 49, '02:42:30', 19),
+(2, 50, '02:44:15', 20),
+(2, 51, '02:48:30', 21),
+(2, 52, '02:50:15', 22),
+(2, 53, '02:52:00', 23),
+(2, 54, '02:53:45', 24),
+(2, 55, '02:55:30', 25),
+(2, 56, '02:55:45', 26),
+(2, 57, '02:55:46', 27),
+(2, 58, '02:55:47', 28),
+(2, 59, '02:55:48', 29),
+(2, 60, '02:55:59', 30);
+
+
+INSERT INTO wyniki (bieg_id, uczestnik_id, czas_ukonczenia, miejsce)
+VALUES
+(3, 61, '01:08:23', 1),
+(3, 62, '01:14:45', 2),
+(3, 63, '01:23:12', 3),
+(3, 64, '01:29:57', 4),
+(3, 65, '01:34:21', 5),
+(3, 66, '01:39:36', 6),
+(3, 67, '01:43:49', 7),
+(3, 68, '01:51:28', 8),
+(3, 69, '01:55:02', 9),
+(3, 70, '01:58:47', 10),
+(3, 71, '02:03:10', 11),
+(3, 72, '02:09:14', 12),
+(3, 73, '02:15:08', 13),
+(3, 74, '02:22:45', 14),
+(3, 75, '02:28:33', 15),
+(3, 76, '02:31:49', 16),
+(3, 77, '02:38:04', 17),
+(3, 78, '02:41:29', 18),
+(3, 79, '02:44:15', 19),
+(3, 80, '02:47:50', 20),
+(3, 81, '02:51:04', 21),
+(3, 82, '02:53:36', 22),
+(3, 83, '02:55:11', 23),
+(3, 84, '02:55:20', 24),
+(3, 85, '02:55:30', 25),
+(3, 86, '02:55:41', 26),
+(3, 87, '02:55:50', 27),
+(3, 88, '02:55:53', 28),
+(3, 89, '02:55:57', 29),
+(3, 90, '02:55:59', 30);
+
+
+INSERT INTO wyniki (bieg_id, uczestnik_id, czas_ukonczenia, miejsce)
+VALUES
+(5, 91, '01:15:32', 1),
+(5, 92, '01:18:47', 2),
+(5, 93, '01:22:15', 3),
+(5, 94, '01:25:03', 4),
+(5, 95, '01:29:08', 5),
+(5, 96, '01:31:42', 6),
+(5, 97, '01:34:50', 7),
+(5, 98, '01:38:23', 8),
+(5, 99, '01:42:11', 9),
+(5, 100, '01:45:36', 10),
+(5, 101, '01:49:27', 11),
+(5, 102, '01:52:55', 12),
+(5, 103, '01:55:18', 13),
+(5, 104, '01:58:04', 14),
+(5, 105, '02:02:19', 15),
+(5, 106, '02:06:38', 16),
+(5, 107, '02:11:05', 17),
+(5, 108, '02:15:09', 18),
+(5, 109, '02:20:20', 19),
+(5, 110, '02:24:43', 20),
+(5, 111, '02:27:31', 21),
+(5, 112, '02:32:09', 22),
+(5, 113, '02:35:26', 23),
+(5, 114, '02:39:15', 24),
+(5, 115, '02:43:47', 25),
+(5, 116, '02:46:22', 26),
+(5, 117, '02:50:08', 27),
+(5, 118, '02:53:39', 28),
+(5, 119, '02:54:52', 29),
+(5, 120, '02:55:57', 30);
+
+
+INSERT INTO wyniki (bieg_id, uczestnik_id, czas_ukonczenia, miejsce)
+VALUES
+(6, 121, '02:17:45', 1),
+(6, 122, '02:24:30', 2),
+(6, 123, '02:31:15', 3),
+(6, 124, '02:38:00', 4),
+(6, 125, '02:44:45', 5),
+(6, 126, '02:51:30', 6),
+(6, 127, '02:58:15', 7),
+(6, 128, '03:05:00', 8),
+(6, 129, '03:11:45', 9),
+(6, 130, '03:18:30', 10),
+(6, 131, '03:25:15', 11),
+(6, 132, '03:32:00', 12),
+(6, 133, '03:38:45', 13),
+(6, 134, '03:45:30', 14),
+(6, 135, '03:52:15', 15),
+(6, 136, '03:59:00', 16),
+(6, 137, '04:05:45', 17),
+(6, 138, '04:12:30', 18),
+(6, 139, '04:19:15', 19),
+(6, 140, '04:26:00', 20),
+(6, 141, '04:32:45', 21),
+(6, 142, '04:39:30', 22),
+(6, 143, '04:46:15', 23),
+(6, 144, '04:53:00', 24),
+(6, 145, '04:59:45', 25),
+(6, 146, '05:06:30', 26),
+(6, 147, '05:13:15', 27),
+(6, 148, '05:20:00', 28),
+(6, 149, '05:26:45', 29),
+(6, 150, '05:33:30', 30);
+
+
+INSERT INTO wyniki (bieg_id, uczestnik_id, czas_ukonczenia, miejsce)
+VALUES
+(4, 151, '02:11:23', 1),
+(4, 152, '02:19:45', 2),
+(4, 153, '02:27:12', 3),
+(4, 154, '02:34:57', 4),
+(4, 155, '02:40:21', 5),
+(4, 156, '02:45:36', 6),
+(4, 157, '02:49:49', 7),
+(4, 158, '02:57:28', 8),
+(4, 159, '03:01:02', 9),
+(4, 160, '03:04:47', 10),
+(4, 161, '03:09:10', 11),
+(4, 162, '03:15:14', 12),
+(4, 163, '03:21:08', 13),
+(4, 164, '03:28:45', 14),
+(4, 165, '03:34:33', 15),
+(4, 166, '03:41:49', 16),
+(4, 167, '03:48:04', 17),
+(4, 168, '03:55:29', 18),
+(4, 169, '04:01:15', 19),
+(4, 170, '04:06:30', 20),
+(4, 171, '04:12:45', 21),
+(4, 172, '04:19:30', 22),
+(4, 173, '04:26:15', 23),
+(4, 174, '04:33:00', 24),
+(4, 175, '04:39:45', 25),
+(4, 176, '04:47:30', 26),
+(4, 177, '04:55:15', 27),
+(4, 178, '05:02:00', 28),
+(4, 179, '05:08:45', 29),
+(4, 180, '05:16:30', 30);
+
+INSERT INTO wyniki (bieg_id, uczestnik_id, czas_ukonczenia, miejsce)
+VALUES
+(7, 181, '00:14:30', 1),
+(7, 182, '00:15:45', 2),
+(7, 183, '00:16:58', 3),
+(7, 184, '00:17:23', 4),
+(7, 185, '00:18:10', 5),
+(7, 186, '00:18:45', 6),
+(7, 187, '00:19:36', 7),
+(7, 188, '00:20:08', 8),
+(7, 189, '00:21:15', 9),
+(7, 190, '00:22:02', 10),
+(7, 191, '00:22:49', 11),
+(7, 192, '00:23:17', 12),
+(7, 193, '00:24:25', 13),
+(7, 194, '00:25:14', 14),
+(7, 195, '00:26:05', 15),
+(7, 196, '00:26:38', 16),
+(7, 197, '00:27:20', 17),
+(7, 198, '00:28:03', 18),
+(7, 199, '00:28:52', 19),
+(7, 200, '00:29:30', 20),
+(7, 201, '00:30:00', 21),
+(7, 202, '00:30:25', 22),
+(7, 203, '00:30:40', 23),
+(7, 204, '00:30:59', 24),
+(7, 205, '00:31:15', 25),
+(7, 206, '00:31:45', 26),
+(7, 207, '00:32:08', 27),
+(7, 208, '00:32:45', 28),
+(7, 209, '00:33:10', 29),
+(7, 210, '00:33:30', 30);
